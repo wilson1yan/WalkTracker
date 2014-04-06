@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+   	<EditTextPreference 
+   	    android:key="weight"
+   	    android:title="Weight"
+   	    android:summary="Put Your Weight (lbs.)"
+   	    android:defaultValue="0"/>
+   	<ListPreference 
+   	    android:key="measurement"
+   	    android:title="Measurment System"
+   	    android:entries="@array/measurement"
+   	    android:entryValues="@array/measurement"
+   	    android:defaultValue="m"/>
+   	
+   	<ListPreference 
+   	    android:key="calorieBurn"
+   	    android:title="Net or Gross"
+   	    android:entries="@array/calories"
+   	    android:entryValues="@array/calories"
+   	    android:defaultValue="Gross"/>
+   	<ListPreference 
+   	    android:key="apiNum"
+   	    android:title="Select API Version"
+   	    android:entries="@array/api"
+   	    android:entryValues="@array/api"
+   	    android:defaultValue="Api V2"/>
+</PreferenceScreen>

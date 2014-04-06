@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">GoogleMaps</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="titlePrefs">Settings</string>
+    <string-array name="requestLocationChanges">
+        <item>1s</item>
+        <item>5s</item>
+        <item>10s</item>
+        <item>30s</item>
+        <item>1min</item>
+        <item>5min</item>
+    </string-array>
+    <string-array name="measurement">
+        <item>m</item>
+        <item>km</item>
+        <item>mi</item>
+    </string-array>
+    
+    <string-array name="calories">
+        <item>Net</item>
+        <item>Gross</item>
+    </string-array>
+    
+    <string-array name="api">
+        <item>Api V1</item>
+        <item>Api V2</item>
+    </string-array>
+</resources>
