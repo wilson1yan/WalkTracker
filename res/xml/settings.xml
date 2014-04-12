@@ -18,10 +18,8 @@
    	    android:entries="@array/calories"
    	    android:entryValues="@array/calories"
    	    android:defaultValue="Gross"/>
-   	<ListPreference 
-   	    android:key="apiNum"
-   	    android:title="Select API Version"
-   	    android:entries="@array/api"
-   	    android:entryValues="@array/api"
-   	    android:defaultValue="Api V2"/>
+   	<CheckBoxPreference 
+   	    android:key="artificial"
+   	    android:title="Fake"
+   	    android:defaultValue="True"/>
 </PreferenceScreen>

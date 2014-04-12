@@ -20,7 +20,7 @@ public class Settings extends PreferenceActivity{
 	public static final String WEIGHT = "weight";
 	public static final String MEASUREMENT = "measurement";
 	public static final String CALORIE_BURN = "calorieBurn";
-	public static final String API_NUM = "apiNum";
+	public static final String TEST = "artificial";
 
 	public static final String KILOMETER = "km";
 	public static final String MILE = "mi";

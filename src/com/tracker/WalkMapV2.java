@@ -50,10 +50,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	public static final double LBS_TO_KG_CONVERSION = 1/2.2046;
 	public static final HashMap<String, Double> METRIC_CONVERSION = new HashMap<String, Double>(){{put("mi", 0.000621371); put("m", 1.0); put("km", 0.001); put("kg", 1/2.2046);}};
 	public static final double MAX_WALKING_SPEED =10;
-	public static final String PROVIDER = "DEBUG";
-	public static final double LATITUDE = 37.775292;
-	public static final double LONGITUDE = -121.897062;
-	public static final double TRAVEL_DISTANCE = 0.00003;
+
 	
 	static boolean isRunning = false;
 
@@ -80,36 +77,30 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 
 	static long startTime;
 	long shortStartTime;
-	boolean test = true;
+	boolean test = false;
 	
 	MarkerOptions markerOptions;
 	BitmapDescriptor bitmapDescriptor;
 	
 	Handler handler;
-	Random rand;
+	AutoPathGenerator generator;
 	
 	public void onCreate(Bundle bundle){
 		super.onCreate(bundle);
 		setContentView(R.layout.main_v2);
 		
+		handler = new Handler();
+		generator = new AutoPathGenerator();
 		
-		if(test){
-			handler = new Handler();
-			rand = new Random();
-			
-			mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-			mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		}else{
-			manager = (LocationManager)getSystemService(LOCATION_SERVICE);
-			initMap();
-		}
+		manager = (LocationManager)getSystemService(LOCATION_SERVICE);
+		initMap();
+		
 		database = new Database(this);
 		gson = new Gson();
         locations = database.getLocations();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.person);
 
-        getCurrentInfo();
         updatePrefs();
                 
         drawAllLines();
@@ -118,28 +109,13 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	Runnable mStatusChecker = new Runnable() {
 		
 		public void run() {
-			Location location = generateNextLocation();
+			Location location = generator.getNextLocation();
 			update(location);
 			
 			handler.postDelayed(mStatusChecker, 1000);
 		}
 	};
-	
-	Location generateNextLocation(){
-		Location location = new Location(PROVIDER);
-		
-		if(lastLocation != null){
-			double radians = Math.toRadians(rand.nextInt(360));
-			location.setLatitude(lastLocation.getLatitude()+TRAVEL_DISTANCE*Math.sin(radians));
-			location.setLongitude(lastLocation.getLongitude()+TRAVEL_DISTANCE*Math.cos(radians));
-		}else{
-			location.setLatitude(LATITUDE);
-			location.setLongitude(LONGITUDE);
-		}
-		
-		return location;
-	}
-	
+
 	void startTask(){
 		mStatusChecker.run();
 	}
@@ -151,8 +127,6 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	private void initMap(){
 		mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		mMap.setMyLocationEnabled(true);
-		mMap.setLocationSource(this);
 	}
 	
 
@@ -184,11 +158,15 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 
 			break;
 		case R.id.reset:
+			System.out.println();
+			
 			if(isRunning){
-				stopTask();
-				isRunning = false;
 				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
-				//deactivate();
+				if(test){
+					stopTask();
+				}else{
+					deactivate();
+				}
 				item.setTitle("Start Walk");
 				
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -209,13 +187,16 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 				
 				builder.show();
 			}else{
-				startTask();
 				isRunning = true;
 				Toast.makeText(this, "Started", Toast.LENGTH_LONG).show();
 				startTime = System.currentTimeMillis();
 				shortStartTime = System.currentTimeMillis();
 				item.setTitle("Stop Walk");
-				//activate(listener);
+				if(test){
+					startTask();
+				}else{
+					activate(listener);
+				}
 			}
 			break;
 		case R.id.viewLog:
@@ -238,6 +219,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	public void reset(){
 		if(!test){
 			GeoPoint geoPoint = new GeoPoint((int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1E6), (int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1E6));
+			
 			database.updateDatabasePoint(geoPoint, true);
 		}
 			
@@ -260,7 +242,8 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 		if(currentLocation != null){
 			currentLocation = mMap.addMarker(new MarkerOptions().icon(bitmapDescriptor).position(currentLocation.getPosition()));
 		}
-		
+		isRunning = false;
+
 	}
 	
 	public void update(Location location){
@@ -273,9 +256,9 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 			shortStartTime = System.currentTimeMillis();
 
 			double speed = findSpeed(currentDistance, seconds/3600, measurement);
-			
+			distance += currentDistance;
+
 			if(speed<=MAX_WALKING_SPEED){
-				distance += currentDistance;
 				calories += calculateCalories(currentDistance, seconds, weight, measurement, calorieType);
 				
 			}
@@ -309,6 +292,8 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
         database.updateDatabasePoint(new GeoPoint((int)(location.getLatitude()*1E6), (int)(location.getLongitude()*1E6)), false);
         
         //deactivate();
+        
+        generator.setPrevLocation(lastLocation);
 
 	}
 	
@@ -428,7 +413,15 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 		
 		convertedDistance = (distance*((Double)METRIC_CONVERSION.get(measurement)).doubleValue());
 		startTime = sharedPreferences.getLong(Settings.CURRENT_START_KEY, 0);
-
+		
+		test = sharedPreferences.getBoolean(Settings.TEST, true);
+		if(!test){
+			mMap.setMyLocationEnabled(true);
+			mMap.setLocationSource(this);
+		}else{
+			mMap.setMyLocationEnabled(false);
+			mMap.setLocationSource(null);
+		}
 	}
 	
 	private void openWeightDialog(){
