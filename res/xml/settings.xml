@@ -22,4 +22,15 @@
    	    android:key="artificial"
    	    android:title="Fake"
    	    android:defaultValue="True"/>
+   	
+   	<CheckBoxPreference 
+   	    android:key="zoom"
+   	    android:title="Zoom"
+   	    android:defaultValue="True"/>
+   	
+   	<CheckBoxPreference 
+   	    android:key="center"
+   	    android:title="Center on Current Position"
+   	    android:defaultValue="True"/>
+   	
 </PreferenceScreen>

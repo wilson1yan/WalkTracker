@@ -21,6 +21,8 @@ public class Settings extends PreferenceActivity{
 	public static final String MEASUREMENT = "measurement";
 	public static final String CALORIE_BURN = "calorieBurn";
 	public static final String TEST = "artificial";
+	public static final String ZOOM = "zoom";
+	public static final String CENTER = "center";
 
 	public static final String KILOMETER = "km";
 	public static final String MILE = "mi";
@@ -31,8 +33,7 @@ public class Settings extends PreferenceActivity{
 	public static final String CURRENT_START_KEY = "current start";
 
 
-	public static final String API_V1 = "Api V1";
-	public static final String API_V2 = "Api V2";
+
 
 	/**
 	 * Called when activity is first created

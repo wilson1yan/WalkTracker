@@ -32,6 +32,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.LocationSource;
@@ -84,6 +85,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	
 	Handler handler;
 	AutoPathGenerator generator;
+	boolean zoom, center;
 	
 	public void onCreate(Bundle bundle){
 		super.onCreate(bundle);
@@ -217,17 +219,19 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 	}
 	
 	public void reset(){
+		GeoPoint geoPoint;
 		if(!test){
-			GeoPoint geoPoint = new GeoPoint((int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1E6), (int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1E6));
-			
-			database.updateDatabasePoint(geoPoint, true);
+			geoPoint = new GeoPoint((int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1E6), (int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1E6));
+		}else{
+			geoPoint = new GeoPoint((int)(lastLocation.getLatitude()*1E6), (int)(lastLocation.getLongitude()*1E6));
 		}
 			
-		
+		database.updateDatabasePoint(geoPoint, true);
+
 		
 		sharedPreferences.edit().putInt(Settings.CURRENT_CALORIE_KEY, 0).commit();
 		sharedPreferences.edit().putInt(Settings.CURRENT_DISTANCE_KEY, 0).commit();
-		sharedPreferences.edit().putInt(Settings.CURRENT_START_KEY, 0).commit();
+		sharedPreferences.edit().putLong(Settings.CURRENT_START_KEY, 0).commit();
 		
 		locations.clear();
 		
@@ -242,13 +246,14 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 		if(currentLocation != null){
 			currentLocation = mMap.addMarker(new MarkerOptions().icon(bitmapDescriptor).position(currentLocation.getPosition()));
 		}
+		
+		generator.reset();
 		isRunning = false;
 
 	}
 	
 	public void update(Location location){
 		if(lastLocation != null){
-	        mMap.animateCamera(CameraUpdateFactory.zoomTo(19f));
 
 			
 			double currentDistance = location.distanceTo(lastLocation);
@@ -268,7 +273,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 
 		}else{
 			lastLocation = location;
-			
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 18f));
 		}
 		
 		if(currentLocation != null){
@@ -281,7 +286,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
         
         LatLng latLng = marker.getPosition();
 
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f));
+        zoom(zoom, center, latLng);
         
         
         drawLines(location);
@@ -295,6 +300,16 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
         
         generator.setPrevLocation(lastLocation);
 
+	}
+	
+	public void zoom(boolean zoom, boolean center, LatLng latlng){
+		if(zoom && center){
+			mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latlng, 18f));
+		}else if(zoom){
+			 mMap.animateCamera(CameraUpdateFactory.zoomTo(18f));
+		}else if(center){
+			mMap.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+		}
 	}
 	
 	public void onLocationChanged(Location location) {
@@ -415,6 +430,9 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 		startTime = sharedPreferences.getLong(Settings.CURRENT_START_KEY, 0);
 		
 		test = sharedPreferences.getBoolean(Settings.TEST, true);
+		zoom = sharedPreferences.getBoolean(Settings.ZOOM, true);
+		center = sharedPreferences.getBoolean(Settings.CENTER, true);
+		
 		if(!test){
 			mMap.setMyLocationEnabled(true);
 			mMap.setLocationSource(this);

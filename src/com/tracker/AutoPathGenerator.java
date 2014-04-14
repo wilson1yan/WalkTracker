@@ -8,7 +8,7 @@ public class AutoPathGenerator {
 	private static final String PROVIDER = "TEST";
 	public static final double LATITUDE = 37.775292;
 	public static final double LONGITUDE = -121.897062;
-	public static final double TRAVEL_DISTANCE = 0.00027;
+	public static final double TRAVEL_DISTANCE = 0.000025;
 	private static final int MIN_DIRECTION_CHANGE = 70;
 	
 	private Location prevLocation;
@@ -57,5 +57,12 @@ public class AutoPathGenerator {
 		}
 		
 		return location;
+	}
+	
+	public void reset(){
+		counter = 0;
+		prevLocation = new Location(PROVIDER);
+		prevLocation.setLatitude(LATITUDE);
+		prevLocation.setLongitude(LONGITUDE);
 	}
 }
