@@ -1,14 +1,18 @@
 package com.tracker;
 
 import android.graphics.Canvas;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.view.SurfaceHolder;
 
-public class CanvasThread extends Thread{
+public class CanvasThreadV2 extends Thread{
 	private SurfaceHolder _surfaceHolder;
 	private WalkCanvasV2 _canvas;
 	private boolean _run = false;
+	public Handler mHandler;
 	
-	public CanvasThread(SurfaceHolder surfaceHolder, WalkCanvasV2 walkCanvas){
+	public CanvasThreadV2(SurfaceHolder surfaceHolder, WalkCanvasV2 walkCanvas){
 		_surfaceHolder = surfaceHolder;
 		_canvas = walkCanvas;
 	}

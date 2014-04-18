@@ -4,7 +4,7 @@
    	    android:key="weight"
    	    android:title="Weight"
    	    android:summary="Put Your Weight (lbs.)"
-   	    android:defaultValue="0"/>
+   	    android:defaultValue="150"/>
    	<ListPreference 
    	    android:key="measurement"
    	    android:title="Measurment System"

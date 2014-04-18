@@ -259,7 +259,6 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 			double currentDistance = location.distanceTo(lastLocation);
 			double seconds = findSecondsPassed(shortStartTime);
 			shortStartTime = System.currentTimeMillis();
-
 			double speed = findSpeed(currentDistance, seconds/3600, measurement);
 			distance += currentDistance;
 
