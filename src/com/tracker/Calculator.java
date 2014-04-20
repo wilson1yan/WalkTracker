@@ -58,7 +58,7 @@ public class Calculator {
 			
 		}
 		
-		convertedDistance = (distance*((Double)METRIC_CONVERSION.get(this.measurementUnit)).doubleValue());
+		convertedDistance = (totalDistance*((Double)METRIC_CONVERSION.get(this.measurementUnit)).doubleValue());
 	
 	}
 	

@@ -76,13 +76,6 @@ public class MapHandler {
 	
 	public void clearMap(){
 		getMap().clear();
-		if(lastPosition != null){
-			markerOptions = new MarkerOptions();
-			markerOptions.icon(bitmapDescriptor);
-			
-			markerOptions.position(lastPosition.getPosition());
-			
-			getMap().addMarker(markerOptions);
-		}
+		
 	}
 }

@@ -88,8 +88,8 @@ public class PathManager extends Service implements LocationListener{
 
 		initCalculator();
 
-		startTask();
-		//activate(listener);
+		//startTask();
+		activate(listener);
 				
 		IntentFilter pathFilter = new IntentFilter(WalkMap.STOP_WALK_UDPATE);
 		receiver = new PathManagerReceiver();
@@ -118,7 +118,7 @@ public class PathManager extends Service implements LocationListener{
 	public void onDestroy(){
 		super.onDestroy();
 		
-		//manager.removeUpdates(this);
+		manager.removeUpdates(this);
 	}
 
 	public void activate(OnLocationChangedListener listener) {
@@ -155,6 +155,7 @@ public class PathManager extends Service implements LocationListener{
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
 		
+		prevLocation = location;
 		autoPathGenerator.setPrevLocation(location);
 	}
 	
@@ -204,15 +205,16 @@ public class PathManager extends Service implements LocationListener{
 					walktracker.saveLog(walktracker.getCurrentWalkPath(), calculator.totalCalories, calculator.totalDistance, calculator.measurementUnit);
 				}
 				
-				GeoPoint geoPoint;
-				//geoPoint = new GeoPoint((int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1E6), (int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1E6));
-				geoPoint = new GeoPoint((int)(prevLocation.getLatitude()*1E6), (int)(prevLocation.getLongitude()*1E6));
-				walktracker.getDatabase().updateDatabasePoint(geoPoint, true);
+				if(prevLocation != null){
+					GeoPoint geoPoint;
+					geoPoint = new GeoPoint((int)(prevLocation.getLatitude()*1E6), (int)(prevLocation.getLongitude()*1E6));
+					walktracker.getDatabase().updateDatabasePoint(geoPoint, true);
+				}
 				
 				reset();
 				updatePreferences();
 				
-				stopTask();
+				//stopTask();
 				stopSelf();
 			}
 		}
