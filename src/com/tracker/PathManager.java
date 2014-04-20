@@ -1,6 +1,7 @@
 package com.tracker;
 
 import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
+import com.google.android.maps.GeoPoint;
 import com.tracker.WalkMap.LocationReceiver;
 
 import android.app.Service;
@@ -14,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -31,11 +33,16 @@ public class PathManager extends Service implements LocationListener{
 	LocationManager manager;
 	Calculator calculator;
 	WalkTrackerApplication walktracker;
+	PathManagerReceiver receiver;
 	
 	Location prevLocation;
 	
 	private long shortTimeStart;
 
+	AutoPathGenerator autoPathGenerator;
+	Handler handler;
+	
+	
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -48,7 +55,28 @@ public class PathManager extends Service implements LocationListener{
 		
 		manager = (LocationManager)getSystemService(LOCATION_SERVICE);
 		walktracker = (WalkTrackerApplication) getApplication();
-
+		
+		handler = new Handler();
+		autoPathGenerator = new AutoPathGenerator();
+		
+	}
+	
+	Runnable mStatusChecker = new Runnable() {
+		
+		public void run() {
+			Location location = autoPathGenerator.getNextLocation();
+			update(location);
+			
+			handler.postDelayed(mStatusChecker, 1000);
+		}
+	};
+	
+	void startTask(){
+		mStatusChecker.run();
+	}
+	
+	void stopTask(){
+		handler.removeCallbacks(mStatusChecker);
 	}
 	
 	@Override
@@ -60,8 +88,13 @@ public class PathManager extends Service implements LocationListener{
 
 		initCalculator();
 
-		activate(listener);
+		startTask();
+		//activate(listener);
 				
+		IntentFilter pathFilter = new IntentFilter(WalkMap.STOP_WALK_UDPATE);
+		receiver = new PathManagerReceiver();
+		registerReceiver(receiver, pathFilter);
+		
 		return START_STICKY;
 	}
 	
@@ -70,18 +103,22 @@ public class PathManager extends Service implements LocationListener{
 		double calories = walktracker.getSharedPreferences().getInt(Settings.CURRENT_CALORIE_KEY, 0);
 		long startTime = walktracker.getSharedPreferences().getLong(Settings.CURRENT_START_KEY, System.currentTimeMillis());
 		
+		if(startTime == -1){
+			startTime = System.currentTimeMillis();
+		}
+		
 		double weight = Integer.parseInt(walktracker.getSharedPreferences().getString(Settings.WEIGHT, "150"));
 		String unit = walktracker.getSharedPreferences().getString(Settings.MEASUREMENT, "m");
 		String calorieType = walktracker.getSharedPreferences().getString(Settings.CALORIE_BURN, "Gross");
 		
-		calculator = new Calculator(distance, calories, System.currentTimeMillis(), weight, unit, calorieType);
+		calculator = new Calculator(distance, calories, startTime, weight, unit, calorieType);
 	}
 	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
 		
-		
+		//manager.removeUpdates(this);
 	}
 
 	public void activate(OnLocationChangedListener listener) {
@@ -98,6 +135,10 @@ public class PathManager extends Service implements LocationListener{
 	}
 
 	public void onLocationChanged(Location location) {
+		update(location);
+	}
+		
+	private void update(Location location){
 		if(prevLocation != null){
 			double timeLength = (System.currentTimeMillis()-this.shortTimeStart)/1000;
 			calculator.calculate(location.distanceTo(prevLocation), timeLength);
@@ -107,26 +148,22 @@ public class PathManager extends Service implements LocationListener{
 			prevLocation = location;
 		}
 		
-		sendLocationInfoToActivity(location);
+		walktracker.getCurrentWalkPath().add(location);
+		sendLocationInfoToActivity();
 		//sendInfoToCanvas();
 		
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
+		
+		autoPathGenerator.setPrevLocation(location);
 	}
 	
 	private void updatePreferences(){
 		calculator.updateInfo(walktracker.getSharedPreferences());
 	}
 	
-	private void sendLocationInfoToActivity(Location location){
-		double latitude = location.getLatitude();
-		double longitude = location.getLongitude();
-		
+	private void sendLocationInfoToActivity(){
 		Intent intent = new Intent(LOCATION_UPDATE);
-		
-		intent.putExtra(LATITUDE, latitude);
-		intent.putExtra(LONGITUDE, longitude);
-		
 		sendBroadcast(intent);
 	}
 	
@@ -150,5 +187,34 @@ public class PathManager extends Service implements LocationListener{
 
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		
+	}
+	
+	public void reset(){
+		calculator.reset();
+	}
+	
+	public class PathManagerReceiver extends BroadcastReceiver{
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equalsIgnoreCase(WalkMap.STOP_WALK_UDPATE)){
+				boolean saveLog = intent.getExtras().getBoolean(WalkMap.SAVE_KEY);
+				
+				if(saveLog){
+					walktracker.saveLog(walktracker.getCurrentWalkPath(), calculator.totalCalories, calculator.totalDistance, calculator.measurementUnit);
+				}
+				
+				GeoPoint geoPoint;
+				//geoPoint = new GeoPoint((int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude()*1E6), (int)(manager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude()*1E6));
+				geoPoint = new GeoPoint((int)(prevLocation.getLatitude()*1E6), (int)(prevLocation.getLongitude()*1E6));
+				walktracker.getDatabase().updateDatabasePoint(geoPoint, true);
+				
+				reset();
+				updatePreferences();
+				
+				stopTask();
+				stopSelf();
+			}
+		}
 	}
 }

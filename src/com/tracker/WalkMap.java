@@ -3,8 +3,11 @@ package com.tracker;
 
 import java.util.ArrayList;
 
+import junit.framework.Test;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -14,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -22,12 +26,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 
 public class WalkMap extends FragmentActivity{
 	public static final String PREFERENCE_UPDATE = "PREFERENCE_UPDATE";
+	public static final String STOP_WALK_UDPATE = "STOP_WALK";
+	public static final String SAVE_KEY = "SAVE";
+	public static final String START_WALK_UPDATE = "START_WALK";
 	
 	GoogleMap mMap;
-	ArrayList<Location> walkPath = new ArrayList<Location>();
 	MapHandler mapHandler;
 	
-	static boolean running = false;
+	public static boolean isRunning = false;
 	
 	LocationReceiver receiver;
 	WalkTrackerApplication walktracker;
@@ -40,6 +46,8 @@ public class WalkMap extends FragmentActivity{
 		walktracker = (WalkTrackerApplication) getApplication();
 		initMap();
 		mapHandler = new MapHandler(mMap);
+		
+		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
 		
      }
 	
@@ -54,7 +62,6 @@ public class WalkMap extends FragmentActivity{
 		
 		IntentFilter locationFilter = new IntentFilter(PathManager.LOCATION_UPDATE);
 		receiver = new LocationReceiver();
-		
 		registerReceiver(receiver, locationFilter);
 	}
 	
@@ -97,15 +104,52 @@ public class WalkMap extends FragmentActivity{
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
-		if(running){
-			stopService(new Intent(this, PathManager.class));
-		}else{
-			startService(new Intent(this, PathManager.class));
-		}
-		
-		running = !running;
+		switch(item.getItemId()){
+		case R.id.itemPrefs:
+			startActivity(new Intent(this, Settings.class));
 
+			break;
+		case R.id.reset:
+			System.out.println();
+			
+			if(isRunning){
+				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
+				mapHandler.clearMap();
+				
+				item.setTitle("Start Walk");
+				
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				String question = "Would You Like to Save Your Walk?";
+				builder.setTitle(question);
+				String[] items = {"Yes", "No"};
+				builder.setItems(items, new DialogInterface.OnClickListener() {
+					
+					public void onClick(DialogInterface dialog, int which) {						
+						boolean saveLog = (which == 0);	//If "yes" is selected, which == 0 is true
+						notifyServiceResetAndOrSaveLog(saveLog);
+					}
+				});
+				
+				builder.show();				
+				isRunning = false;
+			}else{
+				startService(new Intent(this, PathManager.class));
+				
+				item.setTitle("Stop Walk");
+				isRunning = true;
+			}
+			break;
+		case R.id.viewLog:
+			startActivity(new Intent(this, LogView.class));
+			break;
+		}
 		return true;
+	}
+	
+	public void notifyServiceResetAndOrSaveLog(boolean saveLog){
+		Intent intent = new Intent(STOP_WALK_UDPATE);
+		intent.putExtra(SAVE_KEY, saveLog);
+		sendBroadcast(intent);
 	}
 	
 	public void notifyServiceUpdatePreferences(){
@@ -114,21 +158,13 @@ public class WalkMap extends FragmentActivity{
 	}
 	
 	public void updateMapWithNewLocation(Location location){
-		walkPath.add(location);
-		mapHandler.updateMap(walkPath);
+		mapHandler.updateMap(walktracker.getCurrentWalkPath());
 	}
 	
 	public class LocationReceiver extends BroadcastReceiver{
 		@Override
 		public void onReceive(Context context, Intent intent){
-			double latitude = intent.getDoubleExtra(PathManager.LATITUDE, 0);
-			double longitude = intent.getDoubleExtra(PathManager.LONGITUDE, 0);
-				
-			Location location = new Location("RECEIVED_LOCATION");	
-			location.setLatitude(latitude);
-			location.setLongitude(longitude);
-			
-			updateMapWithNewLocation(location);
+			updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
 		}
 	}
 }

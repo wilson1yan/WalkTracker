@@ -38,8 +38,9 @@ public class Calculator {
 	}
 	
 	public void reset(){
-		this.totalDistance = 0;
+		Calculator.totalDistance = 0;
 		this.totalCalories = 0;
+		this.totalDistance = 0;
 		this.convertedDistance = 0;
 		this.startTime = -1;
 	}

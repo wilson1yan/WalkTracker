@@ -38,7 +38,7 @@ public class MapHandler {
 		lastPosition = createMarker(lastLocation);
 		
 		if(path.size()>=2){
-			drawLine(path.get(path.size()-1), path.get(path.size()-2));
+			addToPath(path.get(path.size()-1), path.get(path.size()-2));
 		}
 
 		getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition.getPosition(), 18f));
@@ -53,7 +53,7 @@ public class MapHandler {
         return getMap().addMarker(markerOptions);
 	}
 	
-	private void drawLine(Location prev, Location current){
+	private void addToPath(Location prev, Location current){
 		LatLng src = new LatLng(prev.getLatitude(), prev.getLongitude());
 		LatLng dest = new LatLng(current.getLatitude(), current.getLongitude());
 		
@@ -63,5 +63,26 @@ public class MapHandler {
 	
 	public GoogleMap getMap(){
 		return this.map;
+	}
+	
+	public void drawCurrentPath(ArrayList<Location> walkPath){
+		for(int i=1; i<walkPath.size(); i++){
+			LatLng src = new LatLng(walkPath.get(i-1).getLatitude(), walkPath.get(i-1).getLongitude());
+			LatLng dest = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
+			
+			getMap().addPolyline(new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true));
+		}
+	}
+	
+	public void clearMap(){
+		getMap().clear();
+		if(lastPosition != null){
+			markerOptions = new MarkerOptions();
+			markerOptions.icon(bitmapDescriptor);
+			
+			markerOptions.position(lastPosition.getPosition());
+			
+			getMap().addMarker(markerOptions);
+		}
 	}
 }

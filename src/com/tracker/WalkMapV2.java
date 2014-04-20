@@ -99,7 +99,7 @@ public class WalkMapV2 extends FragmentActivity implements LocationSource, Locat
 		
 		database = new Database(this);
 		gson = new Gson();
-        locations = database.getLocations();
+        locations = database.getCurrentWalkPath();
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.person);
 

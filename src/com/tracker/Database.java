@@ -20,10 +20,11 @@ import android.location.LocationManager;
  *
  */
 public class Database{
-	DbHelper dbHelper;
-	String[] MAX_ID = {"max(_id)"};
-	String[] MAX_WALK_ID = {"max(walk_id)"};
+	public static final String[] MAX_ID = {"max(_id)"};
+	public static final String[] MAX_WALK_ID = {"max(walk_id)"};
 	
+	DbHelper dbHelper;
+
 	/**
 	 * Constructor
 	 * @param context
@@ -142,7 +143,7 @@ public class Database{
 		return geoPoints;
 	}
 	
-	public ArrayList<Location> getLocations(){
+	public ArrayList<Location> getCurrentWalkPath(){
 		ArrayList<Location> locations = new ArrayList<Location>();
 		ArrayList<GeoPoint> geoPoints = getPoints();
 		
