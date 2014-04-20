@@ -5,10 +5,10 @@ import android.view.SurfaceHolder;
 
 public class CanvasThread extends Thread{
 	private SurfaceHolder _surfaceHolder;
-	private WalkCanvasV2 _canvas;
+	private WalkCanvas _canvas;
 	private boolean _run = false;
 	
-	public CanvasThread(SurfaceHolder surfaceHolder, WalkCanvasV2 walkCanvas){
+	public CanvasThread(SurfaceHolder surfaceHolder, WalkCanvas walkCanvas){
 		_surfaceHolder = surfaceHolder;
 		_canvas = walkCanvas;
 	}

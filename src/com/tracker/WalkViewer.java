@@ -21,7 +21,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class WalkViewerV2 extends FragmentActivity{
+public class WalkViewer extends FragmentActivity{
 	ArrayList<GeoPoint> geoPoints;
 	Database database;
 	BitmapDescriptor bitmapDescriptor;

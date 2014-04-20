@@ -1,8 +1,9 @@
 package com.tracker;
 
-import android.content.BroadcastReceiver;
+
+import java.text.DecimalFormat;
+
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,15 +16,18 @@ import android.view.SurfaceView;
 public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 	CanvasThread canvasThread;
 	Paint paint = new Paint();
-
-	long start = System.currentTimeMillis();
-
 	GradientDrawable grad, gradVert;
-
+	DecimalFormat format;
+	
+	double distance, calories;
+	long startTime;
+	
 	public WalkCanvas(Context context, AttributeSet attrs){
 		super(context, attrs);
 		getHolder().addCallback(this);
 		setFocusable(true);
+		
+		format = new DecimalFormat("#.##");
 	}
 
 	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
@@ -31,9 +35,9 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 	}
 
 	public void surfaceCreated(SurfaceHolder holder){
-		//canvasThread = new CanvasThread(getHolder(),  this);
+		canvasThread = new CanvasThread(getHolder(), this);
 		canvasThread.setRunning(true);
-		canvasThread.start();
+		canvasThread.start();		
 	}
 
 
@@ -74,18 +78,19 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 			paint.setTextSize(textSize);
 			paint.setColor(Color.BLUE);
 
-			canvas.drawText((int)WalkMapV2.convertedDistance + WalkMapV2.measurement, x, y, paint);
+			canvas.drawText(getCorrectDecimalPlace(Calculator.convertedDistance, Calculator.measurementUnit) + Calculator.measurementUnit, x, y, paint);
 
 			y = canvas.getWidth()/8;
 
-			String text = getTime((int)((System.currentTimeMillis()-WalkMapV2.startTime)/1000));
+			int seconds = (int)((System.currentTimeMillis()-Calculator.startTime)/1000);
+			String text = getTime(seconds);
 
 
 			x = canvas.getWidth()*11/20;
 
 			canvas.drawText(text, x, y, paint);
 
-			text = (int)WalkMapV2.calories + " calories";
+			text = (int)Calculator.totalCalories + " calories";
 			canvas.drawText(text, canvas.getWidth()/4, (canvas.getHeight())-(canvas.getHeight()/10), paint);
 		}catch(NullPointerException e){
 
@@ -103,6 +108,14 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 			gradVert.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
 		}
 	}
+	
+	private double getCorrectDecimalPlace(double totalDistance, String measurementUnit){
+		if(measurementUnit.equalsIgnoreCase(Settings.MILE) || measurementUnit.equalsIgnoreCase(Settings.KILOMETER)){
+			return Double.parseDouble(format.format(totalDistance));
+		}else{
+			return (int)totalDistance;
+		}
+	}
 
 	private void drawBorders(Canvas canvas, Paint paint){
 		paint.setColor(Color.BLACK);
@@ -117,7 +130,7 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 
 	private String getTime(int time){
 		String text = "";
-		if(WalkMapV2.isRunning){
+		if(WalkMap.isRunning){
 			int remainder;
 			int hours, minutes, seconds;
 
@@ -145,6 +158,4 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 
 		return text;
 	}
-	
-
 }

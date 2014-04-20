@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 
 
 public class Calculator {

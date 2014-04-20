@@ -1,9 +1,7 @@
 package com.tracker;
 
 
-import java.util.ArrayList;
 
-import junit.framework.Test;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;

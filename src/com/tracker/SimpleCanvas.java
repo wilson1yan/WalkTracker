@@ -50,7 +50,7 @@ public class SimpleCanvas extends SurfaceView implements SurfaceHolder.Callback{
 	public void draw(Canvas canvas){
 		try{	
 			if(log == null){
-				log = WalkViewerV2.getLog();
+				log = WalkViewer.getLog();
 			}else{
 				paint.setColor(Color.WHITE);
 				paint.setStrokeWidth(5);

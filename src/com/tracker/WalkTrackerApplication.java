@@ -17,6 +17,7 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	private Database database;
 	private Gson gson;
 	private ArrayList<Location> currentWalkPath;
+	private boolean isTest;
 	
 	public int test = 0;
 	
@@ -30,6 +31,7 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		this.gson = new Gson();
 		
 		this.currentWalkPath = getDatabase().getCurrentWalkPath();
+		this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
 	}
 	
 	@Override
@@ -39,6 +41,10 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
 		
+	}
+	
+	public boolean isTest(){
+		return this.isTest;
 	}
 	
 	public SharedPreferences getSharedPreferences(){

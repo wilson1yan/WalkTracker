@@ -2,14 +2,12 @@ package com.tracker;
 
 import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
 import com.google.android.maps.GeoPoint;
-import com.tracker.WalkMap.LocationReceiver;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,9 +15,6 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Toast;
 
 public class PathManager extends Service implements LocationListener{
 	public static final String LOCATION_UPDATE = "com.tracker.PathManager.LOCATION_UPDATE";
@@ -88,8 +83,11 @@ public class PathManager extends Service implements LocationListener{
 
 		initCalculator();
 
-		//startTask();
-		activate(listener);
+		if(walktracker.isTest()){
+			startTask();
+		}else{
+			activate(listener);
+		}
 				
 		IntentFilter pathFilter = new IntentFilter(WalkMap.STOP_WALK_UDPATE);
 		receiver = new PathManagerReceiver();
@@ -214,7 +212,10 @@ public class PathManager extends Service implements LocationListener{
 				reset();
 				updatePreferences();
 				
-				//stopTask();
+				if(walktracker.isTest()){
+					stopTask();
+					autoPathGenerator.reset();
+				}
 				stopSelf();
 			}
 		}

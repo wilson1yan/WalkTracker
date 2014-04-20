@@ -50,7 +50,7 @@ public class LogView extends ListActivity{
 		String logString = gson.toJson(log);
 		Intent intent;
 
-		intent = new Intent(this, WalkViewerV2.class);
+		intent = new Intent(this, WalkViewer.class);
 
 
 		intent.putExtra("log", logString);
