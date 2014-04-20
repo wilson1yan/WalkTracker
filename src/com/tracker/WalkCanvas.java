@@ -54,44 +54,65 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 		}
 	}
 
+	private void drawBackgroundLayout(Canvas canvas){
+		paint.setColor(Color.WHITE);
+		paint.setStrokeWidth(5);
+		canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
 
+		initGrad(canvas);
+
+		grad.draw(canvas);
+		gradVert.draw(canvas);
+
+		drawBorders(canvas, paint);
+	}
+	
+	private void drawDistanceText(Canvas canvas){
+		int x = canvas.getWidth()/10;
+		int y = (canvas.getHeight()/2)-(canvas.getHeight()/10);
+
+		String text = getCorrectDecimalPlace(Calculator.convertedDistance, Calculator.measurementUnit) + Calculator.measurementUnit;
+		canvas.drawText(text, x, y, paint);
+	}
+	
+	private void drawCalorieText(Canvas canvas){
+		int x = canvas.getWidth()/4;
+		int y = (canvas.getHeight())-(canvas.getHeight()/10);
+		
+		String text = (int)Calculator.totalCalories + " calories";
+		canvas.drawText(text, x, y, paint);
+	}
+	
+	private void drawTimeText(Canvas canvas){
+		int x = canvas.getWidth()*11/20;
+		int y = canvas.getWidth()/8;
+
+		int seconds = (int)((System.currentTimeMillis()-Calculator.startTime)/1000);
+		String text = getTime(seconds);
+		
+		canvas.drawText(text, x, y, paint);
+	}
+	
+	private void initPaintbrush(int textSize, int color){
+		paint.setTextSize(textSize);
+		paint.setColor(color);
+	}
+	
 	@Override
 	public void draw(Canvas canvas){
 
 		try{
-
-			paint.setColor(Color.WHITE);
-			paint.setStrokeWidth(5);
-			canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), paint);
-
-			initGrad(canvas);
-
-			grad.draw(canvas);
-			gradVert.draw(canvas);
-
-			drawBorders(canvas, paint);
+			drawBackgroundLayout(canvas);
 
 			int textSize = (canvas.getHeight()/2)-(canvas.getHeight()/4);
-			int x = canvas.getWidth()/10;
-			int y = (canvas.getHeight()/2)-(canvas.getHeight()/10);
-
-			paint.setTextSize(textSize);
-			paint.setColor(Color.BLUE);
-
-			canvas.drawText(getCorrectDecimalPlace(Calculator.convertedDistance, Calculator.measurementUnit) + Calculator.measurementUnit, x, y, paint);
-
-			y = canvas.getWidth()/8;
-
-			int seconds = (int)((System.currentTimeMillis()-Calculator.startTime)/1000);
-			String text = getTime(seconds);
-
-
-			x = canvas.getWidth()*11/20;
-
-			canvas.drawText(text, x, y, paint);
-
-			text = (int)Calculator.totalCalories + " calories";
-			canvas.drawText(text, canvas.getWidth()/4, (canvas.getHeight())-(canvas.getHeight()/10), paint);
+			int color = Color.BLUE;
+			initPaintbrush(textSize, color);
+			
+			
+			drawDistanceText(canvas);
+			drawTimeText(canvas);
+			drawCalorieText(canvas);
+	
 		}catch(NullPointerException e){
 
 		}

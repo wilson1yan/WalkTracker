@@ -115,20 +115,8 @@ public class WalkMap extends FragmentActivity{
 				mapHandler.clearMap();
 				
 				item.setTitle("Start Walk");
+				buildAndShowResetPrompt();
 				
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				String question = "Would You Like to Save Your Walk?";
-				builder.setTitle(question);
-				String[] items = {"Yes", "No"};
-				builder.setItems(items, new DialogInterface.OnClickListener() {
-					
-					public void onClick(DialogInterface dialog, int which) {						
-						boolean saveLog = (which == 0);	//If "yes" is selected, which == 0 is true
-						notifyServiceResetAndOrSaveLog(saveLog);
-					}
-				});
-				
-				builder.show();				
 				isRunning = false;
 			}else{
 				startService(new Intent(this, PathManager.class));
@@ -143,6 +131,23 @@ public class WalkMap extends FragmentActivity{
 		}
 		return true;
 	}
+	
+	private void buildAndShowResetPrompt(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		String question = "Would You Like to Save Your Walk?";
+		builder.setTitle(question);
+		String[] items = {"Yes", "No"};
+		builder.setItems(items, new DialogInterface.OnClickListener() {
+			
+			public void onClick(DialogInterface dialog, int which) {						
+				boolean saveLog = (which == 0);	//If "yes" is selected, which == 0 is true
+				notifyServiceResetAndOrSaveLog(saveLog);
+			}
+		});
+		
+		builder.show();
+	}
+	
 	
 	public void notifyServiceResetAndOrSaveLog(boolean saveLog){
 		Intent intent = new Intent(STOP_WALK_UDPATE);

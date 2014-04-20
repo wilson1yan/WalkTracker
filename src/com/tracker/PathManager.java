@@ -148,7 +148,6 @@ public class PathManager extends Service implements LocationListener{
 		
 		walktracker.getCurrentWalkPath().add(location);
 		sendLocationInfoToActivity();
-		//sendInfoToCanvas();
 		
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
@@ -163,11 +162,6 @@ public class PathManager extends Service implements LocationListener{
 	
 	private void sendLocationInfoToActivity(){
 		Intent intent = new Intent(LOCATION_UPDATE);
-		sendBroadcast(intent);
-	}
-	
-	private void sendInfoToCanvas(){
-		Intent intent = calculator.packageInfoForCanvas();
 		sendBroadcast(intent);
 	}
 	
@@ -200,7 +194,7 @@ public class PathManager extends Service implements LocationListener{
 				boolean saveLog = intent.getExtras().getBoolean(WalkMap.SAVE_KEY);
 				
 				if(saveLog){
-					walktracker.saveLog(walktracker.getCurrentWalkPath(), calculator.totalCalories, calculator.totalDistance, calculator.measurementUnit);
+					walktracker.saveLog(walktracker.getCurrentWalkPath(), Calculator.totalCalories, Calculator.totalDistance, Calculator.measurementUnit);
 				}
 				
 				if(prevLocation != null){

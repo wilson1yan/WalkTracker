@@ -7,7 +7,10 @@ import android.content.SharedPreferences;
 
 
 public class Calculator {
-	public static final HashMap<String, Double> METRIC_CONVERSION = new HashMap<String, Double>(){{put("mi", 0.000621371); put("m", 1.0); put("km", 0.001); put("kg", 1/2.2046);}};
+	public static final HashMap<String, Double> METRIC_CONVERSION = new HashMap<String, Double>(){
+		private static final long serialVersionUID = 1L;
+	{put("mi", 0.000621371); put("m", 1.0); put("km", 0.001); put("kg", 1/2.2046);}};
+	
 	public static final double LBS_TO_KG_CONVERSION = 1/2.2046;
 	public static final double MAX_WALKING_SPEED = 10;
 	
@@ -16,54 +19,54 @@ public class Calculator {
 	public static final String START_TIME = "START_TIME_TO_CANVAS";
 	public static final String CANVAS_UPDATE = "CANVAS_UPDATE";
 
-	public static double totalDistance, totalCalories, convertedDistance;
-	public static long startTime;
+	public static double totalDistance = 0, totalCalories = 0, convertedDistance = 0;
+	public static long startTime = -1;
 	private double weight;
 	
-	public static String measurementUnit, calorieType;
+	public static String measurementUnit = "m", calorieType;
 	
 	public Calculator(double totalDistance, double totalCalories, long startTime, double weight, String measurementUnit, String calorieType){
 		super();
 		
-		this.totalDistance = totalDistance;
-		this.totalCalories = totalCalories;
+		Calculator.totalDistance = totalDistance;
+		Calculator.totalCalories = totalCalories;
 		this.weight = weight;
-		this.startTime = startTime;
+		Calculator.startTime = startTime;
 		
-		this.measurementUnit = measurementUnit;
-		this.calorieType = calorieType;
+		Calculator.measurementUnit = measurementUnit;
+		Calculator.calorieType = calorieType;
 		
-		this.convertedDistance = (totalDistance*((Double)METRIC_CONVERSION.get(measurementUnit)).doubleValue());
+		Calculator.convertedDistance = (totalDistance*((Double)METRIC_CONVERSION.get(measurementUnit)).doubleValue());
 	}
 	
 	public void reset(){
 		Calculator.totalDistance = 0;
-		this.totalCalories = 0;
-		this.totalDistance = 0;
-		this.convertedDistance = 0;
-		this.startTime = -1;
+		Calculator.totalCalories = 0;
+		Calculator.totalDistance = 0;
+		Calculator.convertedDistance = 0;
+		Calculator.startTime = -1;
 	}
 	
 	public void begin(){
-		this.startTime = System.currentTimeMillis();
+		Calculator.startTime = System.currentTimeMillis();
 	}
 	
 	public void calculate(double distance, double timeLength){
 		double speed = findSpeed(distance, timeLength/3600);
-		this.totalDistance += distance;
+		Calculator.totalDistance += distance;
 
 		if(speed<=MAX_WALKING_SPEED){
-			totalCalories += calculateCalories(distance, timeLength, weight, this.calorieType);
+			totalCalories += calculateCalories(distance, timeLength, weight, Calculator.calorieType);
 			
 		}
 		
-		convertedDistance = (totalDistance*((Double)METRIC_CONVERSION.get(this.measurementUnit)).doubleValue());
+		convertedDistance = (totalDistance*((Double)METRIC_CONVERSION.get(Calculator.measurementUnit)).doubleValue());
 	
 	}
 	
 	private double findSpeed(double distance, double hours){
 		double km = 0;
-		km = (distance/(Double)METRIC_CONVERSION.get(this.measurementUnit))/1000; 
+		km = (distance/(Double)METRIC_CONVERSION.get(Calculator.measurementUnit))/1000; 
 		return km/hours;
 	}
 	
@@ -83,17 +86,17 @@ public class Calculator {
 	}
 	
 	public void updateInfo(SharedPreferences sharedPreferences){
-		sharedPreferences.edit().putInt(Settings.CURRENT_DISTANCE_KEY, (int)this.totalDistance).commit();
-		sharedPreferences.edit().putInt(Settings.CURRENT_CALORIE_KEY, (int)this.totalCalories).commit();
+		sharedPreferences.edit().putInt(Settings.CURRENT_DISTANCE_KEY, (int)Calculator.totalDistance).commit();
+		sharedPreferences.edit().putInt(Settings.CURRENT_CALORIE_KEY, (int)Calculator.totalCalories).commit();
 		sharedPreferences.edit().putLong(Settings.CURRENT_START_KEY, startTime).commit();
 	}
 	
 	public Intent packageInfoForCanvas(){
 		Intent packagedInfo = new Intent(CANVAS_UPDATE);
 		
-		packagedInfo.putExtra(DISTANCE, this.totalDistance);
-		packagedInfo.putExtra(CALORIES, this.totalCalories);
-		packagedInfo.putExtra(START_TIME, this.startTime);
+		packagedInfo.putExtra(DISTANCE, Calculator.totalDistance);
+		packagedInfo.putExtra(CALORIES, Calculator.totalCalories);
+		packagedInfo.putExtra(START_TIME, Calculator.startTime);
 		
 		return packagedInfo;
 	}
