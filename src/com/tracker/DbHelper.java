@@ -45,7 +45,7 @@ public class DbHelper extends SQLiteOpenHelper{
 	@Override
 	public void onCreate(SQLiteDatabase db) {		
 		db.execSQL("create table " + LOGS_TABLE + " ( _id int primary key,distance int,calories int,time int,date long,measurement text,points text,walk_id long)");
-		db.execSQL("create table " + WALKING_GEOPOINT + " ( _id int primary key,walk_id int, latitude int,longitude int)");
+		db.execSQL("create table " + WALKING_GEOPOINT + " ( _id int primary key,walk_id int, latitude double,longitude double)");
 	}
 
 	@Override

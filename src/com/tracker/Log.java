@@ -14,7 +14,6 @@ public class Log {
 	private double calories;
 	private double distance;
 	private String measurement;
-	private String points;
 	private long id;
 
 	/**
@@ -25,13 +24,12 @@ public class Log {
 	 * @param distance
 	 * @param measurement
 	 */
-	public Log(Date date, double time, double calories, double distance, String measurement, String points, long id){
+	public Log(Date date, double time, double calories, double distance, String measurement, long id){
 		this.date = date;
 		this.time = time;
         this.calories = calories;
 		this.distance = distance;
 		this.measurement = measurement;
-		this.points = points;
 		this.id = id;
 	}
 
@@ -92,11 +90,7 @@ public class Log {
 	public String getMeasurement(){
 		return measurement;
 	}
-
-	public String getPoints(){
-		return points;
-	}
-
+	
 	public long getId(){
 		return id;
 	}

@@ -3,7 +3,6 @@ package com.tracker;
 import java.util.ArrayList;
 import java.util.Date;
 
-import com.google.android.maps.GeoPoint;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -66,10 +65,9 @@ public class Database{
 			int caloriesBurned = cursor.getInt(cursor.getColumnIndex(DbHelper.CALORIES_BURNED));
 			int time = cursor.getInt(cursor.getColumnIndex(DbHelper.TIME));
 			String measurement = cursor.getString(cursor.getColumnIndex(DbHelper.MEASUREMENT));
-			String points = cursor.getString(cursor.getColumnIndex(DbHelper.POINTS));
 			long id = cursor.getLong(cursor.getColumnIndex(DbHelper.ID_NUM));
 			
-			logs.add(new Log(date, time, caloriesBurned, distance, measurement, points, id));
+			logs.add(new Log(date, time, caloriesBurned, distance, measurement, id));
 			cursor.moveToNext();
 		}
 		db.close();
@@ -89,12 +87,11 @@ public class Database{
 				int caloriesBurned = cursor.getInt(cursor.getColumnIndex(DbHelper.CALORIES_BURNED));
 				int time = cursor.getInt(cursor.getColumnIndex(DbHelper.TIME));
 				String measurement = cursor.getString(cursor.getColumnIndex(DbHelper.MEASUREMENT));
-				String points = cursor.getString(cursor.getColumnIndex(DbHelper.POINTS));
 				long id = cursor.getLong(cursor.getColumnIndex(DbHelper.ID_NUM));
 				
 				db.close();
 				
-				return new Log(date, time, caloriesBurned, distance, measurement, points, id);
+				return new Log(date, time, caloriesBurned, distance, measurement, id);
 			}else{
 				cursor.moveToNext();
 			}
@@ -104,25 +101,13 @@ public class Database{
 		return null;
 	}
 	
-	public String debugTable(String tableName){
-		String records="";
-		
-		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		//distance int,calories int,time int,date long,measurement text
-		Cursor cursor = db.query(tableName, null , null, null, null, null, null);
-		cursor.moveToLast();
-		records = records+"walk_id=" + cursor.getLong(cursor.getColumnIndex(DbHelper.ID_NUM)) + "\n";
-		records = records+"id=" + cursor.getLong(cursor.getColumnIndex(DbHelper.ID));
-		db.close();
-		return records;
-	}
-	
 	/**
 	 * Retrieves a list of all the geopoints in the table by using a query and cursor
 	 * @return An Arraylist of geo points
 	 */
-	public ArrayList<GeoPoint> getPoints(){
-		ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+	
+	public ArrayList<Location> getCurrentWalkPath(){		
+		ArrayList<Location> walkPath = new ArrayList<Location>();
 		
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor cursor = db.query(DbHelper.WALKING_GEOPOINT, null, null, null, null, null, null);
@@ -131,38 +116,24 @@ public class Database{
 		
 		while(!cursor.isAfterLast()){
 			if(cursor.getInt(cursor.getColumnIndex(DbHelper.WALK_ID)) == id){
-				int latitude = cursor.getInt(cursor.getColumnIndex(DbHelper.LATITUDE));
-				int longitude = cursor.getInt(cursor.getColumnIndex(DbHelper.LONGITUDE));
+				double latitude = cursor.getDouble(cursor.getColumnIndex(DbHelper.LATITUDE));
+				double longitude = cursor.getDouble(cursor.getColumnIndex(DbHelper.LONGITUDE));
 				
-				geoPoints.add(new GeoPoint(latitude, longitude));
+				Location location = new Location(LocationManager.GPS_PROVIDER);
+				location.setLatitude(latitude);
+				location.setLongitude(longitude);
+				walkPath.add(location);
 			}
 			
 			cursor.moveToNext();
 		}
 		db.close();
-		return geoPoints;
+		
+		return walkPath;
 	}
 	
-	public ArrayList<Location> getCurrentWalkPath(){
-		ArrayList<Location> locations = new ArrayList<Location>();
-		ArrayList<GeoPoint> geoPoints = getPoints();
-		
-		for(int i=0; i<geoPoints.size(); i++){
-			double lat = geoPoints.get(i).getLatitudeE6()/1000000.0;
-			double lon = geoPoints.get(i).getLongitudeE6()/1000000.0;
-			
-			Location location = new Location(LocationManager.GPS_PROVIDER);
-			location.setLatitude(lat);
-			location.setLongitude(lon);
-			
-			locations.add(location);
-		}
-		
-		return locations;
-	}
-	
-	public ArrayList<GeoPoint> getWalkPoints(long id){
-		ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
+	public ArrayList<Location> getWalkPoints(long id){
+		ArrayList<Location> walkPath = new ArrayList<Location>();
 		
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		Cursor cursor = db.query(DbHelper.WALKING_GEOPOINT, null, null, null, null, null, null);
@@ -170,15 +141,20 @@ public class Database{
 		
 		while(!cursor.isAfterLast()){
 			if(cursor.getInt(cursor.getColumnIndex(DbHelper.WALK_ID))==id){
-				int latitude = cursor.getInt(cursor.getColumnIndex(DbHelper.LATITUDE));
-				int longitude = cursor.getInt(cursor.getColumnIndex(DbHelper.LONGITUDE));
+				double latitude = cursor.getDouble(cursor.getColumnIndex(DbHelper.LATITUDE));
+				double longitude = cursor.getDouble(cursor.getColumnIndex(DbHelper.LONGITUDE));
 				
-				geoPoints.add(new GeoPoint(latitude, longitude));
+				Location location = new Location(LocationManager.GPS_PROVIDER);
+				location.setLatitude(latitude);
+				location.setLongitude(longitude);
+				
+				walkPath.add(location);
 			}
 			cursor.moveToNext();
 		}
 		db.close();
-		return geoPoints;
+		
+		return walkPath;
 	}
 	
 	/**
@@ -216,7 +192,7 @@ public class Database{
 	 * Adds a new geo point to the database
 	 * @param geoPoint
 	 */
-	public void updateDatabasePoint(GeoPoint geoPoint, boolean forReset){
+	public void updateDatabasePoint(Location location, boolean forReset){
 		long id = getMaxId(DbHelper.WALKING_GEOPOINT, MAX_ID);
 		id++;
 		long walkId = getMaxId(DbHelper.WALKING_GEOPOINT, MAX_WALK_ID);
@@ -226,13 +202,13 @@ public class Database{
 		
 		ContentValues contentValues = new ContentValues();
 		contentValues.put(DbHelper.ID, id);
-		contentValues.put(DbHelper.LATITUDE, geoPoint.getLatitudeE6());
-		contentValues.put(DbHelper.LONGITUDE, geoPoint.getLongitudeE6());
+		contentValues.put(DbHelper.LATITUDE, location.getLatitude());
+		contentValues.put(DbHelper.LONGITUDE, location.getLongitude());
 		contentValues.put(DbHelper.WALK_ID, walkId);
 		insertOrThrow(DbHelper.WALKING_GEOPOINT, contentValues);
 	}
 	
-	public ArrayList<GeoPoint> getGeoPointsForDraw(){
+	public ArrayList<Location> getWalkPathForDraw(){
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		String[] columns = {"max(walk_id)"};
 		Cursor cursor = db.query(DbHelper.WALKING_GEOPOINT, columns, null, null, null, null, null);

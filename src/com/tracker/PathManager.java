@@ -1,7 +1,6 @@
 package com.tracker;
 
 import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
-import com.google.android.maps.GeoPoint;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -198,9 +197,7 @@ public class PathManager extends Service implements LocationListener{
 				}
 				
 				if(prevLocation != null){
-					GeoPoint geoPoint;
-					geoPoint = new GeoPoint((int)(prevLocation.getLatitude()*1E6), (int)(prevLocation.getLongitude()*1E6));
-					walktracker.getDatabase().updateDatabasePoint(geoPoint, true);
+					walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
 				}
 				
 				reset();
