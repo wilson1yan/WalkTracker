@@ -17,6 +17,7 @@ import android.os.IBinder;
 
 public class PathManager extends Service implements LocationListener{
 	public static final String LOCATION_UPDATE = "com.tracker.PathManager.LOCATION_UPDATE";
+	public static final String CLEAR_MAP = "com.tracker.PathManager.CLEAR_MAP";
 	public static final String LATITUDE = "com.tracker.PathManager.LATITUDE";
 	public static final String LONGITUDE = "com.tracker.PathManager.LONGITUDE";
 	
@@ -185,6 +186,11 @@ public class PathManager extends Service implements LocationListener{
 		calculator.reset();
 	}
 	
+	private void notifyMapToClear(){
+		Intent intent = new Intent(CLEAR_MAP);
+		sendBroadcast(intent);
+	}
+	
 	public class PathManagerReceiver extends BroadcastReceiver{
 		
 		@Override
@@ -205,8 +211,9 @@ public class PathManager extends Service implements LocationListener{
 				
 				if(walktracker.isTest()){
 					stopTask();
-					autoPathGenerator.reset();
 				}
+				
+				notifyMapToClear();
 				stopSelf();
 			}
 		}

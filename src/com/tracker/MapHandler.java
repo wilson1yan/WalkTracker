@@ -40,8 +40,16 @@ public class MapHandler {
 		if(path.size()>=2){
 			addToPath(path.get(path.size()-1), path.get(path.size()-2));
 		}
-
-		getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition.getPosition(), 18f));
+	}
+	
+	public void animateCamera(WalkTrackerApplication walktracker){
+		if(walktracker.getCurrentWalkPath().size() <= 2 || (walktracker.isCenter() && walktracker.isZoom())){
+			getMap().animateCamera(CameraUpdateFactory.newLatLngZoom(lastPosition.getPosition(), 18f));
+		}else if(walktracker.isZoom() && !walktracker.isCenter()){
+			getMap().animateCamera(CameraUpdateFactory.zoomTo(18f));
+		}else if(!walktracker.isZoom() && walktracker.isCenter()){
+			getMap().animateCamera(CameraUpdateFactory.newLatLng(lastPosition.getPosition()));
+		}
 	}
 	
 	private Marker createMarker(Location location){
@@ -75,7 +83,6 @@ public class MapHandler {
 	}
 	
 	public void clearMap(){
-		getMap().clear();
-		
+		getMap().clear();	
 	}
 }

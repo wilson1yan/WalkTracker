@@ -15,6 +15,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	private Database database;
 	private ArrayList<Location> currentWalkPath;
 	private boolean isTest;
+	private boolean center;
+	private boolean zoom;
 	
 	public int test = 0;
 	
@@ -27,7 +29,7 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		this.database = new Database(this);
 		
 		this.currentWalkPath = getDatabase().getCurrentWalkPath();
-		this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
+		updateValuesFromPreferences();
 	}
 	
 	@Override
@@ -35,12 +37,26 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		super.onTerminate();
 	}
 	
+	private void updateValuesFromPreferences(){
+		this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
+		this.center = sharedPreferences.getBoolean(Settings.CENTER, true);
+		this.zoom = sharedPreferences.getBoolean(Settings.ZOOM, true);
+	}
+	
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
-		
+		updateValuesFromPreferences();
 	}
 	
 	public boolean isTest(){
 		return this.isTest;
+	}
+	
+	public boolean isZoom(){
+		return this.zoom;
+	}
+	
+	public boolean isCenter(){
+		return this.center;
 	}
 	
 	public SharedPreferences getSharedPreferences(){

@@ -61,8 +61,7 @@ public class AutoPathGenerator {
 	
 	public void reset(){
 		counter = 0;
-		prevLocation = new Location(PROVIDER);
-		prevLocation.setLatitude(LATITUDE);
-		prevLocation.setLongitude(LONGITUDE);
+		
+		prevLocation = null;
 	}
 }

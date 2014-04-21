@@ -58,7 +58,10 @@ public class WalkMap extends FragmentActivity{
 	public void onResume(){
 		super.onResume();
 		
-		IntentFilter locationFilter = new IntentFilter(PathManager.LOCATION_UPDATE);
+		IntentFilter locationFilter = new IntentFilter();
+		locationFilter.addAction(PathManager.LOCATION_UPDATE);
+		locationFilter.addAction(PathManager.CLEAR_MAP);
+		
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, locationFilter);
 	}
@@ -112,7 +115,6 @@ public class WalkMap extends FragmentActivity{
 			
 			if(isRunning){
 				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
-				mapHandler.clearMap();
 				
 				item.setTitle("Start Walk");
 				buildAndShowResetPrompt();
@@ -144,7 +146,7 @@ public class WalkMap extends FragmentActivity{
 				notifyServiceResetAndOrSaveLog(saveLog);
 			}
 		});
-		
+
 		builder.show();
 	}
 	
@@ -162,12 +164,17 @@ public class WalkMap extends FragmentActivity{
 	
 	public void updateMapWithNewLocation(Location location){
 		mapHandler.updateMap(walktracker.getCurrentWalkPath());
+		mapHandler.animateCamera(walktracker);
 	}
 	
 	public class LocationReceiver extends BroadcastReceiver{
 		@Override
 		public void onReceive(Context context, Intent intent){
-			updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
+			if(intent.getAction().equalsIgnoreCase(PathManager.LOCATION_UPDATE)){
+				updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
+			}else if(intent.getAction().equalsIgnoreCase(PathManager.CLEAR_MAP)){
+				mapHandler.clearMap();
+			}
 		}
 	}
 }

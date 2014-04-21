@@ -9,7 +9,7 @@ import android.content.SharedPreferences;
 public class Calculator {
 	public static final HashMap<String, Double> METRIC_CONVERSION = new HashMap<String, Double>(){
 		private static final long serialVersionUID = 1L;
-	{put("mi", 0.000621371); put("m", 1.0); put("km", 0.001); put("kg", 1/2.2046);}};
+	{put("mi", 0.000621371); put("m", 1.0); put("km", 0.001); put("kg", 1/2.2046); put("ft", 3.28084);}};
 	
 	public static final double LBS_TO_KG_CONVERSION = 1/2.2046;
 	public static final double MAX_WALKING_SPEED = 10;
