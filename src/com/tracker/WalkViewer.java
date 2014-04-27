@@ -58,7 +58,7 @@ public class WalkViewer extends FragmentActivity{
 	}
 	
 	public void drawLines(){
-		for(int i=1; i<walkPath.size(); i++){
+		for(int i=2; i<walkPath.size(); i++){
 			LatLng src = new LatLng(walkPath.get(i-1).getLatitude(), walkPath.get(i-1).getLongitude());
 			LatLng dest = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
 			

@@ -31,15 +31,19 @@ public class MapHandler {
 	public void updateMap(ArrayList<Location> path){
 		Location lastLocation = path.get(path.size()-1);
 		
+		updateWalkerLoc(lastLocation);
+		
+		if(path.size()>=3){
+			addToPath(path.get(path.size()-1), path.get(path.size()-2));
+		}
+	}
+	
+	public void updateWalkerLoc(Location location){
 		if(lastPosition != null){
 			lastPosition.remove();
 		}
 		
-		lastPosition = createMarker(lastLocation);
-		
-		if(path.size()>=2){
-			addToPath(path.get(path.size()-1), path.get(path.size()-2));
-		}
+		lastPosition = createMarker(location);
 	}
 	
 	public void animateCamera(WalkTrackerApplication walktracker){
@@ -74,7 +78,7 @@ public class MapHandler {
 	}
 	
 	public void drawCurrentPath(ArrayList<Location> walkPath){
-		for(int i=1; i<walkPath.size(); i++){
+		for(int i=2; i<walkPath.size(); i++){
 			LatLng src = new LatLng(walkPath.get(i-1).getLatitude(), walkPath.get(i-1).getLongitude());
 			LatLng dest = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
 			

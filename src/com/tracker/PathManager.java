@@ -18,6 +18,7 @@ import android.os.IBinder;
 public class PathManager extends Service implements LocationListener{
 	public static final String LOCATION_UPDATE = "com.tracker.PathManager.LOCATION_UPDATE";
 	public static final String CLEAR_MAP = "com.tracker.PathManager.CLEAR_MAP";
+	public static final String PERSON_UPDATE = "com.tracker.PathManager.PERSON_UPDATE";
 	public static final String LATITUDE = "com.tracker.PathManager.LATITUDE";
 	public static final String LONGITUDE = "com.tracker.PathManager.LONGITUDE";
 	
@@ -76,22 +77,17 @@ public class PathManager extends Service implements LocationListener{
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId){
-		super.onStartCommand(intent, flags, startId);
-		
-		this.isRunning = true;
-		this.shortTimeStart = System.currentTimeMillis();
+		super.onStartCommand(intent, flags, startId);	
 
 		initCalculator();
-
-		if(walktracker.isTest()){
-			startTask();
-		}else{
-			activate(listener);
-		}
 				
-		IntentFilter pathFilter = new IntentFilter(WalkMap.STOP_WALK_UDPATE);
+		IntentFilter pathFilter = new IntentFilter();
+		pathFilter.addAction(WalkMap.START_WALK_UPDATE);
+		pathFilter.addAction(WalkMap.STOP_WALK_UDPATE);
 		receiver = new PathManagerReceiver();
 		registerReceiver(receiver, pathFilter);
+		
+		activate();
 		
 		return START_STICKY;
 	}
@@ -119,11 +115,10 @@ public class PathManager extends Service implements LocationListener{
 		manager.removeUpdates(this);
 	}
 
-	public void activate(OnLocationChangedListener listener) {
-		this.listener = listener;
+	public void activate() {
 		LocationProvider gpsProvider = manager.getProvider(LocationManager.GPS_PROVIDER);
 		if(gpsProvider != null){
-			manager.requestLocationUpdates(gpsProvider.getName(), 1000, 1, this);
+			manager.requestLocationUpdates(gpsProvider.getName(), 3000, 3, this);
 		}
 		
 	}
@@ -133,7 +128,10 @@ public class PathManager extends Service implements LocationListener{
 	}
 
 	public void onLocationChanged(Location location) {
-		update(location);
+		if(isRunning){ update(location); }
+		else {
+			notifyAcitivtyDrawPerson(location);
+		}
 	}
 		
 	private void update(Location location){
@@ -142,12 +140,13 @@ public class PathManager extends Service implements LocationListener{
 			calculator.calculate(location.distanceTo(prevLocation), timeLength);
 			
 			shortTimeStart = System.currentTimeMillis();
+			notifyActivityDrawMap();
+
 		}else{
 			prevLocation = location;
 		}
 		
 		walktracker.getCurrentWalkPath().add(location);
-		sendLocationInfoToActivity();
 		
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
@@ -160,8 +159,16 @@ public class PathManager extends Service implements LocationListener{
 		calculator.updateInfo(walktracker.getSharedPreferences());
 	}
 	
-	private void sendLocationInfoToActivity(){
+	private void notifyActivityDrawMap(){
 		Intent intent = new Intent(LOCATION_UPDATE);
+		sendBroadcast(intent);
+	}
+	
+	private void notifyAcitivtyDrawPerson(Location loc){
+		Intent intent = new Intent(PERSON_UPDATE);
+		intent.putExtra(LATITUDE, loc.getLatitude());
+		intent.putExtra(LONGITUDE, loc.getLongitude());
+		
 		sendBroadcast(intent);
 	}
 	
@@ -191,30 +198,49 @@ public class PathManager extends Service implements LocationListener{
 		sendBroadcast(intent);
 	}
 	
+	private void stopWalk(boolean saveLog){
+		if(saveLog){
+			walktracker.saveLog(walktracker.getCurrentWalkPath(), Calculator.totalCalories, Calculator.totalDistance, Calculator.measurementUnit);
+		}
+		
+		if(prevLocation != null){
+			walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
+		}
+		
+		reset();
+		updatePreferences();
+		
+		if(walktracker.isTest()){
+			stopTask();
+		}
+		
+		notifyMapToClear();
+		this.isRunning = false;
+	}
+	
+	private void startWalk(){
+		this.shortTimeStart = System.currentTimeMillis();
+		initCalculator();
+		
+		if(walktracker.isTest()){
+			startTask();
+		}else{
+			activate();
+		}
+		
+		this.isRunning = true;
+	}
+	
+	
 	public class PathManagerReceiver extends BroadcastReceiver{
 		
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			if(intent.getAction().equalsIgnoreCase(WalkMap.STOP_WALK_UDPATE)){
 				boolean saveLog = intent.getExtras().getBoolean(WalkMap.SAVE_KEY);
-				
-				if(saveLog){
-					walktracker.saveLog(walktracker.getCurrentWalkPath(), Calculator.totalCalories, Calculator.totalDistance, Calculator.measurementUnit);
-				}
-				
-				if(prevLocation != null){
-					walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
-				}
-				
-				reset();
-				updatePreferences();
-				
-				if(walktracker.isTest()){
-					stopTask();
-				}
-				
-				notifyMapToClear();
-				stopSelf();
+				stopWalk(saveLog);
+			}else if(intent.getAction().equalsIgnoreCase(WalkMap.START_WALK_UPDATE)){
+				startWalk();
 			}
 		}
 	}

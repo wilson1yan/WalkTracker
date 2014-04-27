@@ -17,4 +17,9 @@
         <item>Net</item>
         <item>Gross</item>
     </string-array>
+    
+    <string-array name="log_options">
+        <item>Delete</item>
+        <item>Cancel</item>
+    </string-array>
 </resources>

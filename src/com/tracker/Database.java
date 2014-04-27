@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -22,21 +23,12 @@ public class Database{
 	public static final String[] MAX_ID = {"max(_id)"};
 	public static final String[] MAX_WALK_ID = {"max(walk_id)"};
 	
-	DbHelper dbHelper;
+	private DbHelper dbHelper;
 
-	/**
-	 * Constructor
-	 * @param context
-	 */
 	public Database(Context context){
 		dbHelper = new DbHelper(context);
 	}
 	
-	/**
-	 * Inserts the contents value into the specifed table (string)
-	 * @param value
-	 * @param contentValues
-	 */
 	public void insertOrThrow(String value, ContentValues contentValues){
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		try{
@@ -46,15 +38,11 @@ public class Database{
 		db.close();
 	}
 	
-	/**
-	 * Retrieves the logs from the database using a query and cursor
-	 * @return An Arraylist of Logs
-	 */
 	public ArrayList<Log> getLogs(){
 		ArrayList<Log> logs = new ArrayList<Log>();
 		
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
-		//distance int,calories int,time int,date long,measurement text
+		
 		Cursor cursor = db.query(DbHelper.LOGS_TABLE, null, null, null, null, null, null);
 		cursor.moveToNext();
 		
@@ -100,11 +88,6 @@ public class Database{
 		db.close();
 		return null;
 	}
-	
-	/**
-	 * Retrieves a list of all the geopoints in the table by using a query and cursor
-	 * @return An Arraylist of geo points
-	 */
 	
 	public ArrayList<Location> getCurrentWalkPath(){		
 		ArrayList<Location> walkPath = new ArrayList<Location>();
@@ -157,11 +140,7 @@ public class Database{
 		return walkPath;
 	}
 	
-	/**
-	 * To keep away from duplicate ids (increments by 1 for each row)
-	 * @param table
-	 * @return The current max id number for the table
-	 */
+	
 	public long getMaxId(String table, String[] col){
 		SQLiteDatabase db = dbHelper.getReadableDatabase();
 		
@@ -170,10 +149,6 @@ public class Database{
 		return cursor.moveToNext() ? cursor.getLong(0) : Long.MIN_VALUE;
 	}
 	
-	/**
-	 * Adds a new log to the database
-	 * @param log
-	 */
 	public void updateDatabaseLog(Log log) {
 		long id = getMaxId(DbHelper.LOGS_TABLE, MAX_ID);
 		id++;
@@ -188,10 +163,6 @@ public class Database{
 		insertOrThrow(DbHelper.LOGS_TABLE, contentValues);
 	}
 
-	/**
-	 * Adds a new geo point to the database
-	 * @param geoPoint
-	 */
 	public void updateDatabasePoint(Location location, boolean forReset){
 		long id = getMaxId(DbHelper.WALKING_GEOPOINT, MAX_ID);
 		id++;
@@ -208,11 +179,11 @@ public class Database{
 		insertOrThrow(DbHelper.WALKING_GEOPOINT, contentValues);
 	}
 	
-	public ArrayList<Location> getWalkPathForDraw(){
-		SQLiteDatabase db = dbHelper.getReadableDatabase();
-		String[] columns = {"max(walk_id)"};
-		Cursor cursor = db.query(DbHelper.WALKING_GEOPOINT, columns, null, null, null, null, null);
-		long id = cursor.moveToNext() ? cursor.getLong(0) : Long.MIN_VALUE;
-		return getWalkPoints(id);
+	public void deleteLog(long walkId, Context context){
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		db.delete(DbHelper.LOGS_TABLE, DbHelper.WALK_ID + "=" + walkId, null);
+		db.delete(DbHelper.WALKING_GEOPOINT, DbHelper.WALK_ID + "=" + walkId, null);
+		
+		db.close();
 	}
 }

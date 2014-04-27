@@ -27,6 +27,7 @@ public class Settings extends PreferenceActivity{
 	public static final String KILOMETER = "km";
 	public static final String MILE = "mi";
 	public static final String METER = "m";
+	public static final String FEET = "ft";
 
 	public static final String CURRENT_DISTANCE_KEY = "current distance";
 	public static final String CURRENT_CALORIE_KEY = "current calorie";

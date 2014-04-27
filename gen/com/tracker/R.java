@@ -10,6 +10,7 @@ package com.tracker;
 public final class R {
     public static final class array {
         public static final int calories=0x7f090001;
+        public static final int log_options=0x7f090002;
         public static final int measurement=0x7f090000;
     }
     public static final class attr {

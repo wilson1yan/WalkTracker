@@ -38,14 +38,24 @@ public class Log {
 	 */
 	@Override
 	public String toString(){
-		String string = date.toString() + "\n" + (int)distance;
-		if(measurement.equalsIgnoreCase(Settings.MILE)){
-			string += "mi ";
-		}else if(measurement.equalsIgnoreCase(Settings.KILOMETER)){
-			string += "km ";
-		}else{
-			string += "m ";
-		}
+		String string = date.toString() + "\n";
+		int convertedDistance = (int)(Calculator.METRIC_CONVERSION.get(measurement)*distance);
+		string += convertedDistance + measurement + " ";
+		
+		string += (int)calories + "cal ";
+		double min = time/60;
+		DecimalFormat decimalFormat = new DecimalFormat("#.##");
+		min = Double.valueOf(decimalFormat.format(min));
+
+		string += min + "min\n";
+		return string;
+	}
+	
+	public String getShortString(){
+		String string = "";
+		int convertedDistance = (int)(Calculator.METRIC_CONVERSION.get(measurement)*distance);
+		string += convertedDistance + measurement + " ";
+		
 		string += (int)calories + "cal ";
 		double min = time/60;
 		DecimalFormat decimalFormat = new DecimalFormat("#.##");

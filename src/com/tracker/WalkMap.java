@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.drive.internal.i;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -46,12 +48,17 @@ public class WalkMap extends FragmentActivity{
 		mapHandler = new MapHandler(mMap);
 		
 		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
+		startService(new Intent(this, PathManager.class));
 		
      }
 	
 	@Override
 	public void onStart(){
 		super.onStart();		
+		
+		if(!isRunning){
+			startService(new Intent(this, PathManager.class));
+		}
 	}
 	
 	@Override
@@ -61,6 +68,7 @@ public class WalkMap extends FragmentActivity{
 		IntentFilter locationFilter = new IntentFilter();
 		locationFilter.addAction(PathManager.LOCATION_UPDATE);
 		locationFilter.addAction(PathManager.CLEAR_MAP);
+		locationFilter.addAction(PathManager.PERSON_UPDATE);
 		
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, locationFilter);
@@ -70,18 +78,24 @@ public class WalkMap extends FragmentActivity{
 	public void onPause(){
 		super.onPause();
 		
-		notifyServiceUpdatePreferences();
+		notifyServiceTo(PREFERENCE_UPDATE);
+		
 	}
 	
 	@Override
 	public void onStop(){
 		super.onStop();
+		
+		if(!isRunning){
+			stopService(new Intent(this, PathManager.class));
+		}
 	}
 	
 	
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
+		stopService(new Intent(this, PathManager.class));
 	}
 	
 
@@ -120,10 +134,9 @@ public class WalkMap extends FragmentActivity{
 				buildAndShowResetPrompt();
 				
 				isRunning = false;
-			}else{
-				startService(new Intent(this, PathManager.class));
-				
+			}else{				
 				item.setTitle("Stop Walk");
+				notifyServiceTo(START_WALK_UPDATE);
 				isRunning = true;
 			}
 			break;
@@ -157,8 +170,8 @@ public class WalkMap extends FragmentActivity{
 		sendBroadcast(intent);
 	}
 	
-	public void notifyServiceUpdatePreferences(){
-		Intent intent = new Intent(PREFERENCE_UPDATE);
+	public void notifyServiceTo(String action){
+		Intent intent = new Intent(action);
 		sendBroadcast(intent);
 	}
 	
@@ -174,6 +187,16 @@ public class WalkMap extends FragmentActivity{
 				updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
 			}else if(intent.getAction().equalsIgnoreCase(PathManager.CLEAR_MAP)){
 				mapHandler.clearMap();
+			}else if(intent.getAction().equalsIgnoreCase(PathManager.PERSON_UPDATE)){
+				double lat = intent.getDoubleExtra(PathManager.LATITUDE, 0);
+				double lon = intent.getDoubleExtra(PathManager.LONGITUDE, 0);
+				
+				Location loc = new Location(LocationManager.GPS_PROVIDER);
+				loc.setLatitude(lat);
+				loc.setLongitude(lon);
+				
+				mapHandler.updateWalkerLoc(loc);
+				mapHandler.animateCamera(walktracker);
 			}
 		}
 	}

@@ -60,8 +60,6 @@ public class AutoPathGenerator {
 	}
 	
 	public void reset(){
-		counter = 0;
-		
-		prevLocation = null;
+		counter = 0;		
 	}
 }
