@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.drive.internal.i;
+import com.google.android.gms.internal.is;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 
@@ -32,9 +33,7 @@ public class WalkMap extends FragmentActivity{
 	
 	GoogleMap mMap;
 	MapHandler mapHandler;
-	
-	public static boolean isRunning = false;
-	
+		
 	LocationReceiver receiver;
 	WalkTrackerApplication walktracker;
 			
@@ -48,15 +47,13 @@ public class WalkMap extends FragmentActivity{
 		mapHandler = new MapHandler(mMap);
 		
 		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
-		startService(new Intent(this, PathManager.class));
-		
      }
 	
 	@Override
 	public void onStart(){
 		super.onStart();		
 		
-		if(!isRunning){
+		if(!PathManager.isWalking && !PathManager.isRunning){
 			startService(new Intent(this, PathManager.class));
 		}
 	}
@@ -72,6 +69,8 @@ public class WalkMap extends FragmentActivity{
 		
 		receiver = new LocationReceiver();
 		registerReceiver(receiver, locationFilter);
+		
+		if(PathManager.isWalking) mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
 	}
 	
 	@Override
@@ -86,7 +85,7 @@ public class WalkMap extends FragmentActivity{
 	public void onStop(){
 		super.onStop();
 		
-		if(!isRunning){
+		if(!PathManager.isWalking && PathManager.isRunning){
 			stopService(new Intent(this, PathManager.class));
 		}
 	}
@@ -127,17 +126,14 @@ public class WalkMap extends FragmentActivity{
 		case R.id.reset:
 			System.out.println();
 			
-			if(isRunning){
+			if(PathManager.isWalking){
 				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
 				
 				item.setTitle("Start Walk");
-				buildAndShowResetPrompt();
-				
-				isRunning = false;
+				buildAndShowResetPrompt();				
 			}else{				
 				item.setTitle("Stop Walk");
 				notifyServiceTo(START_WALK_UPDATE);
-				isRunning = true;
 			}
 			break;
 		case R.id.viewLog:

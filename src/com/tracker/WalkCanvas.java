@@ -151,7 +151,7 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 
 	private String getTime(int time){
 		String text = "";
-		if(WalkMap.isRunning){
+		if(PathManager.isWalking){
 			int remainder;
 			int hours, minutes, seconds;
 

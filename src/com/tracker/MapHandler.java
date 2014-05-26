@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -69,7 +70,6 @@ public class MapHandler {
 		LatLng src = new LatLng(prev.getLatitude(), prev.getLongitude());
 		LatLng dest = new LatLng(current.getLatitude(), current.getLongitude());
 		
-		
 		getMap().addPolyline(new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true));
 	}
 	
@@ -78,12 +78,19 @@ public class MapHandler {
 	}
 	
 	public void drawCurrentPath(ArrayList<Location> walkPath){
-		for(int i=2; i<walkPath.size(); i++){
-			LatLng src = new LatLng(walkPath.get(i-1).getLatitude(), walkPath.get(i-1).getLongitude());
-			LatLng dest = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
-			
-			getMap().addPolyline(new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true));
+		PolylineOptions polylineOptions = new PolylineOptions().width(8).color(Color.RED).geodesic(true);
+		Location lastLoc = new Location(LocationManager.GPS_PROVIDER);
+		boolean foundLoc = false;
+		for(int i=1; i<walkPath.size(); i++){
+			LatLng current = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());			
+			polylineOptions.add(current);
+			lastLoc = walkPath.get(i);
+			foundLoc = true;
 		}
+		getMap().clear();
+		if(foundLoc) lastPosition = createMarker(lastLoc);
+		getMap().addPolyline(polylineOptions);
+		
 	}
 	
 	public void clearMap(){

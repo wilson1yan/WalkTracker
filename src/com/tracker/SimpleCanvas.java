@@ -1,5 +1,7 @@
 package com.tracker;
 
+import java.text.DecimalFormat;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,11 +17,13 @@ public class SimpleCanvas extends SurfaceView implements SurfaceHolder.Callback{
 	Paint paint = new Paint();
 	GradientDrawable grad, gradVert;
 	Log log;
+	DecimalFormat format;
 	
 	public SimpleCanvas(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		getHolder().addCallback(this);
 		setFocusable(true);
+		format = new DecimalFormat("#.##");
 	}
 	
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
@@ -70,7 +74,8 @@ public class SimpleCanvas extends SurfaceView implements SurfaceHolder.Callback{
 				paint.setTextSize(textSize);
 				paint.setColor(Color.BLUE);
 							
-				canvas.drawText(log.getDistance() + log.getMeasurement(), x, y, paint);
+				double converted = Double.parseDouble(format.format(log.getConvertedDistance()));
+				canvas.drawText(converted + log.getMeasurement(), x, y, paint);
 				
 				y = canvas.getWidth()/8;
 				
@@ -87,6 +92,14 @@ public class SimpleCanvas extends SurfaceView implements SurfaceHolder.Callback{
 			
 		}catch(NullPointerException e){
 			
+		}
+	}
+	
+	private double getCorrectDecimalPlace(double totalDistance, String measurementUnit){
+		if(measurementUnit.equalsIgnoreCase(Settings.MILE) || measurementUnit.equalsIgnoreCase(Settings.KILOMETER)){
+			return Double.parseDouble(format.format(totalDistance));
+		}else{
+			return (int)totalDistance;
 		}
 	}
 	

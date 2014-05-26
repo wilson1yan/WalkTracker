@@ -15,6 +15,7 @@ public class Log {
 	private double distance;
 	private String measurement;
 	private long id;
+	private double convertedDistance;
 
 	/**
 	 * Constructor
@@ -31,6 +32,7 @@ public class Log {
 		this.distance = distance;
 		this.measurement = measurement;
 		this.id = id;
+		this.convertedDistance = getDistance()*((Double)Calculator.METRIC_CONVERSION.get(Calculator.measurementUnit)).doubleValue();
 	}
 
 	/**
@@ -39,8 +41,7 @@ public class Log {
 	@Override
 	public String toString(){
 		String string = date.toString() + "\n";
-		int convertedDistance = (int)(Calculator.METRIC_CONVERSION.get(measurement)*distance);
-		string += convertedDistance + measurement + " ";
+		string += new DecimalFormat("#.##").format(this.convertedDistance) + measurement + " ";
 		
 		string += (int)calories + "cal ";
 		double min = time/60;
@@ -91,6 +92,10 @@ public class Log {
 	 */
 	public double getDistance(){
 		return distance;
+	}
+	
+	public double getConvertedDistance(){
+		return convertedDistance;
 	}
 
 	/**

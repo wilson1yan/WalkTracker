@@ -23,8 +23,8 @@ public class PathManager extends Service implements LocationListener{
 	public static final String LONGITUDE = "com.tracker.PathManager.LONGITUDE";
 	
 	public static final int DELAY_STRING = 1000;
-	private boolean isRunning;
 	private OnLocationChangedListener listener;
+	public static boolean isRunning = false, isWalking = false;
 	
 	LocationManager manager;
 	Calculator calculator;
@@ -55,6 +55,7 @@ public class PathManager extends Service implements LocationListener{
 		handler = new Handler();
 		autoPathGenerator = new AutoPathGenerator();
 		
+		isRunning = true;
 	}
 	
 	Runnable mStatusChecker = new Runnable() {
@@ -113,14 +114,16 @@ public class PathManager extends Service implements LocationListener{
 		super.onDestroy();
 		
 		manager.removeUpdates(this);
+		isRunning = false;
 	}
 
 	public void activate() {
-		LocationProvider gpsProvider = manager.getProvider(LocationManager.GPS_PROVIDER);
-		if(gpsProvider != null){
-			manager.requestLocationUpdates(gpsProvider.getName(), 3000, 3, this);
+		if(!walktracker.isTest()){
+			LocationProvider gpsProvider = manager.getProvider(LocationManager.GPS_PROVIDER);
+			if(gpsProvider != null){
+				manager.requestLocationUpdates(gpsProvider.getName(), 0, 0, this);
+			}
 		}
-		
 	}
 
 	public void deactivate() {
@@ -128,7 +131,7 @@ public class PathManager extends Service implements LocationListener{
 	}
 
 	public void onLocationChanged(Location location) {
-		if(isRunning){ update(location); }
+		if(isWalking){ update(location); }
 		else {
 			notifyAcitivtyDrawPerson(location);
 		}
@@ -171,10 +174,6 @@ public class PathManager extends Service implements LocationListener{
 		
 		sendBroadcast(intent);
 	}
-	
-	public boolean isRunning(){
-		return this.isRunning;
-	}
 
 	
 	public void onProviderDisabled(String provider) {
@@ -201,10 +200,13 @@ public class PathManager extends Service implements LocationListener{
 	private void stopWalk(boolean saveLog){
 		if(saveLog){
 			walktracker.saveLog(walktracker.getCurrentWalkPath(), Calculator.totalCalories, Calculator.totalDistance, Calculator.measurementUnit);
+
 		}
-		
+		walktracker.getCurrentWalkPath().clear();
+
 		if(prevLocation != null){
 			walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
+			walktracker.getCurrentWalkPath().add(prevLocation);
 		}
 		
 		reset();
@@ -215,7 +217,7 @@ public class PathManager extends Service implements LocationListener{
 		}
 		
 		notifyMapToClear();
-		this.isRunning = false;
+		this.isWalking = false;
 	}
 	
 	private void startWalk(){
@@ -228,7 +230,7 @@ public class PathManager extends Service implements LocationListener{
 			activate();
 		}
 		
-		this.isRunning = true;
+		this.isWalking = true;
 	}
 	
 	
