@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
+
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
@@ -14,12 +16,11 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	private SharedPreferences sharedPreferences;
 	private Database database;
 	private ArrayList<Location> currentWalkPath;
+	//private ArrayList<LatLng> currentWalkPathLatLng;
 	private boolean isTest;
 	private boolean center;
 	private boolean zoom;
-	
-	public int test = 0;
-	
+		
 	@Override
 	public void onCreate(){
 		super.onCreate();
@@ -29,8 +30,19 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		this.database = new Database(this);
 		
 		this.currentWalkPath = getDatabase().getCurrentWalkPath();
+		//this.currentWalkPathLatLng = convertToLatLng(getCurrentWalkPath());
+		
 		updateValuesFromPreferences();
 	}
+	
+	/*private ArrayList<LatLng> convertToLatLng(ArrayList<Location> path){
+		ArrayList<LatLng> convert = new ArrayList<LatLng>();
+		for(Location location : path){
+			convert.add(new LatLng(location.getLatitude(), location.getLongitude()));
+		}
+		
+		return convert;
+	}*/
 	
 	@Override
 	public void onTerminate(){
@@ -41,6 +53,7 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
 		this.center = sharedPreferences.getBoolean(Settings.CENTER, true);
 		this.zoom = sharedPreferences.getBoolean(Settings.ZOOM, true);
+		Calculator.measurementUnit = sharedPreferences.getString(Settings.MEASUREMENT, "m");
 	}
 	
 	public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
@@ -48,7 +61,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	}
 	
 	public boolean isTest(){
-		return this.isTest;
+		//return this.isTest;
+		return false;
 	}
 	
 	public boolean isZoom(){
@@ -85,4 +99,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	public ArrayList<Location> getCurrentWalkPath(){
 		return this.currentWalkPath;
 	}
+	
+	/*public ArrayList<LatLng> getCurrentWalkPathLatLng(){
+		return this.currentWalkPathLatLng;
+	}*/
 }

@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -58,13 +59,16 @@ public class WalkViewer extends FragmentActivity{
 	}
 	
 	public void drawLines(){
-		for(int i=2; i<walkPath.size(); i++){
-			LatLng src = new LatLng(walkPath.get(i-1).getLatitude(), walkPath.get(i-1).getLongitude());
-			LatLng dest = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
-			
+		LatLng src = new LatLng(walkPath.get(1).getLatitude(), walkPath.get(1).getLongitude());
+		LatLng dest = new LatLng(walkPath.get(2).getLatitude(), walkPath.get(2).getLongitude());
+        
+		PolylineOptions options = new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true);
+		for(int i=3; i<walkPath.size(); i++){
+			LatLng next = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
 	        
-			mMap.addPolyline(new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true));
+			options.add(next);
 		}
+		mMap.addPolyline(options);
 		
 		Location last = walkPath.get(walkPath.size()-1);
 		LatLng latLng = new LatLng(last.getLatitude(), last.getLongitude());

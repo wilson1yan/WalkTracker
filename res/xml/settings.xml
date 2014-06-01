@@ -18,10 +18,11 @@
    	    android:entries="@array/calories"
    	    android:entryValues="@array/calories"
    	    android:defaultValue="Gross"/>
-   	<CheckBoxPreference 
+   <!-- <CheckBoxPreference 
    	    android:key="artificial"
    	    android:title="Fake"
    	    android:defaultValue="True"/>
+   	    -->
    	
    	<CheckBoxPreference 
    	    android:key="zoom"

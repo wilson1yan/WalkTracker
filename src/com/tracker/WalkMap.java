@@ -18,11 +18,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.drive.internal.i;
-import com.google.android.gms.internal.is;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
-
 
 
 public class WalkMap extends FragmentActivity{
@@ -93,8 +90,9 @@ public class WalkMap extends FragmentActivity{
 	
 	@Override
 	public void onDestroy(){
-		super.onDestroy();
+		super.onDestroy();	
 		stopService(new Intent(this, PathManager.class));
+		unregisterReceiver(receiver);
 	}
 	
 
@@ -130,7 +128,9 @@ public class WalkMap extends FragmentActivity{
 				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
 				
 				item.setTitle("Start Walk");
-				buildAndShowResetPrompt();				
+				mapHandler.reset();
+				buildAndShowResetPrompt();
+				
 			}else{				
 				item.setTitle("Stop Walk");
 				notifyServiceTo(START_WALK_UPDATE);
@@ -172,6 +172,7 @@ public class WalkMap extends FragmentActivity{
 	}
 	
 	public void updateMapWithNewLocation(Location location){
+		//mapHandler.updateMap(walktracker.getCurrentWalkPathLatLng(), walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
 		mapHandler.updateMap(walktracker.getCurrentWalkPath());
 		mapHandler.animateCamera(walktracker);
 	}

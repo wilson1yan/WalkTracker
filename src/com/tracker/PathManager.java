@@ -112,7 +112,8 @@ public class PathManager extends Service implements LocationListener{
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		
+		unregisterReceiver(receiver);
+
 		manager.removeUpdates(this);
 		isRunning = false;
 	}
@@ -150,6 +151,7 @@ public class PathManager extends Service implements LocationListener{
 		}
 		
 		walktracker.getCurrentWalkPath().add(location);
+		//walktracker.getCurrentWalkPathLatLng().add(new LatLng(location.getLatitude(), location.getLongitude()));
 		
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
@@ -203,10 +205,12 @@ public class PathManager extends Service implements LocationListener{
 
 		}
 		walktracker.getCurrentWalkPath().clear();
+		//walktracker.getCurrentWalkPathLatLng().clear();
 
 		if(prevLocation != null){
 			walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
 			walktracker.getCurrentWalkPath().add(prevLocation);
+			//walktracker.getCurrentWalkPathLatLng().add(new LatLng(prevLocation.getLatitude(), prevLocation.getLongitude()));
 		}
 		
 		reset();
@@ -217,6 +221,7 @@ public class PathManager extends Service implements LocationListener{
 		}
 		
 		notifyMapToClear();
+		
 		this.isWalking = false;
 	}
 	

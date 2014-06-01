@@ -20,23 +20,28 @@ public class MapHandler {
 	BitmapDescriptor bitmapDescriptor;
 	MarkerOptions markerOptions;
 	Marker lastPosition;
+	PolylineOptions walkPathLine;
+	
+	private int counter = 0;
 	
 	public MapHandler(GoogleMap map){
 		this.map = map;
 		this.bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.person);
 		
 		map.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		
+		walkPathLine = new PolylineOptions().width(8).color(Color.RED);
 	}
 	
-	public void updateMap(ArrayList<Location> path){
-		Location lastLocation = path.get(path.size()-1);
+	public void updateMap(ArrayList<Location> path){		
+		Location loc1 = path.get(path.size()-2);
+		Location loc2 = path.get(path.size()-1);
 		
-		updateWalkerLoc(lastLocation);
 		
-		if(path.size()>=3){
-			addToPath(path.get(path.size()-1), path.get(path.size()-2));
+		if(path.size()>=2){
+			addToPath(new LatLng(loc1.getLatitude(), loc1.getLongitude()), new LatLng(loc2.getLatitude(), loc2.getLongitude()));
+			counter++;
 		}
+		updateWalkerLoc(path.get(path.size()-1));
 	}
 	
 	public void updateWalkerLoc(Location location){
@@ -66,11 +71,15 @@ public class MapHandler {
         return getMap().addMarker(markerOptions);
 	}
 	
-	private void addToPath(Location prev, Location current){
-		LatLng src = new LatLng(prev.getLatitude(), prev.getLongitude());
-		LatLng dest = new LatLng(current.getLatitude(), current.getLongitude());
-		
-		getMap().addPolyline(new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true));
+	private void addToPath(LatLng current, LatLng last){
+		if(counter == 20){
+			getMap().clear();
+			getMap().addPolyline(walkPathLine);
+			counter = 0;
+		}else{
+			getMap().addPolyline(new PolylineOptions().color(Color.RED).width(8).add(current).add(last));
+			walkPathLine.add(current);
+		}
 	}
 	
 	public GoogleMap getMap(){
@@ -78,7 +87,7 @@ public class MapHandler {
 	}
 	
 	public void drawCurrentPath(ArrayList<Location> walkPath){
-		PolylineOptions polylineOptions = new PolylineOptions().width(8).color(Color.RED).geodesic(true);
+		PolylineOptions polylineOptions = new PolylineOptions().width(8).color(Color.RED);
 		Location lastLoc = new Location(LocationManager.GPS_PROVIDER);
 		boolean foundLoc = false;
 		for(int i=1; i<walkPath.size(); i++){
@@ -95,5 +104,9 @@ public class MapHandler {
 	
 	public void clearMap(){
 		getMap().clear();	
+	}
+	
+	public void reset(){
+		walkPathLine = new PolylineOptions().width(8).color(Color.RED);
 	}
 }
