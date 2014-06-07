@@ -5,7 +5,7 @@
  * should not be modified by hand.
  */
 
-package com.tracker;
+package com.wtwalktracker2;
 
 public final class R {
     public static final class array {
@@ -220,24 +220,22 @@ containing a value of this type.
         public static final int settings=0x7f020020;
     }
     public static final class id {
-        public static final int canvas=0x7f06000a;
-        public static final int editText=0x7f06000c;
-        public static final int home=0x7f06000e;
+        public static final int canvas=0x7f060008;
+        public static final int editText=0x7f06000a;
+        public static final int home=0x7f06000c;
         public static final int hybrid=0x7f060004;
-        public static final int itemPrefs=0x7f06000f;
+        public static final int itemPrefs=0x7f06000d;
         public static final int item_image=0x7f060006;
         public static final int item_text=0x7f060005;
         public static final int log=0x7f060007;
-        public static final int map=0x7f06000b;
-        public static final int mapView=0x7f060008;
+        public static final int map=0x7f060009;
         public static final int none=0x7f060000;
         public static final int normal=0x7f060001;
-        public static final int reset=0x7f060010;
+        public static final int reset=0x7f06000e;
         public static final int satellite=0x7f060002;
         public static final int terrain=0x7f060003;
-        public static final int textView=0x7f060009;
-        public static final int viewLog=0x7f060011;
-        public static final int weight_button=0x7f06000d;
+        public static final int viewLog=0x7f06000f;
+        public static final int weight_button=0x7f06000b;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f080000;
@@ -245,11 +243,9 @@ containing a value of this type.
     public static final class layout {
         public static final int item_layout=0x7f030000;
         public static final int log_list=0x7f030001;
-        public static final int main=0x7f030002;
-        public static final int main_v2=0x7f030003;
-        public static final int simple_mapv2=0x7f030004;
-        public static final int splash_screen=0x7f030005;
-        public static final int weight_dialog=0x7f030006;
+        public static final int main_v2=0x7f030002;
+        public static final int simple_mapv2=0x7f030003;
+        public static final int weight_dialog=0x7f030004;
     }
     public static final class menu {
         public static final int home=0x7f0b0000;
@@ -385,11 +381,11 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #AdsAttrs_adSize com.tracker:adSize}</code></td><td>
+           <tr><td><code>{@link #AdsAttrs_adSize com.wtwalktracker2:adSize}</code></td><td>
     The size of the ad.</td></tr>
-           <tr><td><code>{@link #AdsAttrs_adSizes com.tracker:adSizes}</code></td><td>
+           <tr><td><code>{@link #AdsAttrs_adSizes com.wtwalktracker2:adSizes}</code></td><td>
     A comma-separated list of the supported ad sizes.</td></tr>
-           <tr><td><code>{@link #AdsAttrs_adUnitId com.tracker:adUnitId}</code></td><td> The ad unit ID.</td></tr>
+           <tr><td><code>{@link #AdsAttrs_adUnitId com.wtwalktracker2:adUnitId}</code></td><td> The ad unit ID.</td></tr>
            </table>
            @see #AdsAttrs_adSize
            @see #AdsAttrs_adSizes
@@ -415,7 +411,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.tracker:adSize
+          @attr name com.wtwalktracker2:adSize
         */
         public static final int AdsAttrs_adSize = 0;
         /**
@@ -435,7 +431,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.tracker:adSizes
+          @attr name com.wtwalktracker2:adSizes
         */
         public static final int AdsAttrs_adSizes = 1;
         /**
@@ -451,7 +447,7 @@ theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
           <p>This is a private symbol.
-          @attr name com.tracker:adUnitId
+          @attr name com.wtwalktracker2:adUnitId
         */
         public static final int AdsAttrs_adUnitId = 2;
         /** Attributes that can be used with a MapAttrs.
@@ -460,20 +456,20 @@ containing a value of this type.
            <colgroup align="left" />
            <colgroup align="left" />
            <tr><th>Attribute</th><th>Description</th></tr>
-           <tr><td><code>{@link #MapAttrs_cameraBearing com.tracker:cameraBearing}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTargetLat com.tracker:cameraTargetLat}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTargetLng com.tracker:cameraTargetLng}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraTilt com.tracker:cameraTilt}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_cameraZoom com.tracker:cameraZoom}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_mapType com.tracker:mapType}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiCompass com.tracker:uiCompass}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiRotateGestures com.tracker:uiRotateGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiScrollGestures com.tracker:uiScrollGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiTiltGestures com.tracker:uiTiltGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiZoomControls com.tracker:uiZoomControls}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_uiZoomGestures com.tracker:uiZoomGestures}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_useViewLifecycle com.tracker:useViewLifecycle}</code></td><td></td></tr>
-           <tr><td><code>{@link #MapAttrs_zOrderOnTop com.tracker:zOrderOnTop}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraBearing com.wtwalktracker2:cameraBearing}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLat com.wtwalktracker2:cameraTargetLat}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTargetLng com.wtwalktracker2:cameraTargetLng}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraTilt com.wtwalktracker2:cameraTilt}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_cameraZoom com.wtwalktracker2:cameraZoom}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_mapType com.wtwalktracker2:mapType}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiCompass com.wtwalktracker2:uiCompass}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiRotateGestures com.wtwalktracker2:uiRotateGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiScrollGestures com.wtwalktracker2:uiScrollGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiTiltGestures com.wtwalktracker2:uiTiltGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomControls com.wtwalktracker2:uiZoomControls}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_uiZoomGestures com.wtwalktracker2:uiZoomGestures}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_useViewLifecycle com.wtwalktracker2:useViewLifecycle}</code></td><td></td></tr>
+           <tr><td><code>{@link #MapAttrs_zOrderOnTop com.wtwalktracker2:zOrderOnTop}</code></td><td></td></tr>
            </table>
            @see #MapAttrs_cameraBearing
            @see #MapAttrs_cameraTargetLat
@@ -497,7 +493,7 @@ containing a value of this type.
             0x7f01000f, 0x7f010010
         };
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#cameraBearing}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#cameraBearing}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -507,11 +503,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:cameraBearing
+          @attr name com.wtwalktracker2:cameraBearing
         */
         public static final int MapAttrs_cameraBearing = 1;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#cameraTargetLat}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#cameraTargetLat}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -521,11 +517,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:cameraTargetLat
+          @attr name com.wtwalktracker2:cameraTargetLat
         */
         public static final int MapAttrs_cameraTargetLat = 2;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#cameraTargetLng}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#cameraTargetLng}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -535,11 +531,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:cameraTargetLng
+          @attr name com.wtwalktracker2:cameraTargetLng
         */
         public static final int MapAttrs_cameraTargetLng = 3;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#cameraTilt}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#cameraTilt}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -549,11 +545,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:cameraTilt
+          @attr name com.wtwalktracker2:cameraTilt
         */
         public static final int MapAttrs_cameraTilt = 4;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#cameraZoom}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#cameraZoom}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -563,11 +559,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:cameraZoom
+          @attr name com.wtwalktracker2:cameraZoom
         */
         public static final int MapAttrs_cameraZoom = 5;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#mapType}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#mapType}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -583,11 +579,11 @@ containing a value of this type.
 <tr><td><code>terrain</code></td><td>3</td><td></td></tr>
 <tr><td><code>hybrid</code></td><td>4</td><td></td></tr>
 </table>
-          @attr name com.tracker:mapType
+          @attr name com.wtwalktracker2:mapType
         */
         public static final int MapAttrs_mapType = 0;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiCompass}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiCompass}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -597,11 +593,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiCompass
+          @attr name com.wtwalktracker2:uiCompass
         */
         public static final int MapAttrs_uiCompass = 6;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiRotateGestures}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiRotateGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -611,11 +607,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiRotateGestures
+          @attr name com.wtwalktracker2:uiRotateGestures
         */
         public static final int MapAttrs_uiRotateGestures = 7;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiScrollGestures}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiScrollGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -625,11 +621,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiScrollGestures
+          @attr name com.wtwalktracker2:uiScrollGestures
         */
         public static final int MapAttrs_uiScrollGestures = 8;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiTiltGestures}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiTiltGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -639,11 +635,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiTiltGestures
+          @attr name com.wtwalktracker2:uiTiltGestures
         */
         public static final int MapAttrs_uiTiltGestures = 9;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiZoomControls}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiZoomControls}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -653,11 +649,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiZoomControls
+          @attr name com.wtwalktracker2:uiZoomControls
         */
         public static final int MapAttrs_uiZoomControls = 10;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#uiZoomGestures}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#uiZoomGestures}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -667,11 +663,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:uiZoomGestures
+          @attr name com.wtwalktracker2:uiZoomGestures
         */
         public static final int MapAttrs_uiZoomGestures = 11;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#useViewLifecycle}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#useViewLifecycle}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -681,11 +677,11 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:useViewLifecycle
+          @attr name com.wtwalktracker2:useViewLifecycle
         */
         public static final int MapAttrs_useViewLifecycle = 12;
         /**
-          <p>This symbol is the offset where the {@link com.tracker.R.attr#zOrderOnTop}
+          <p>This symbol is the offset where the {@link com.wtwalktracker2.R.attr#zOrderOnTop}
           attribute's value can be found in the {@link #MapAttrs} array.
 
 
@@ -695,7 +691,7 @@ containing a value of this type.
 theme attribute (in the form
 "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
 containing a value of this type.
-          @attr name com.tracker:zOrderOnTop
+          @attr name com.wtwalktracker2:zOrderOnTop
         */
         public static final int MapAttrs_zOrderOnTop = 13;
     };

@@ -1,4 +1,4 @@
-package com.tracker;
+package com.wtwalktracker2;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -6,17 +6,25 @@ import java.util.Date;
 
 
 
+
+
+
+import com.google.android.gms.maps.model.LatLng;
+
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.preference.PreferenceManager;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 
 public class WalkTrackerApplication extends Application implements OnSharedPreferenceChangeListener{	
 	private SharedPreferences sharedPreferences;
 	private Database database;
 	private ArrayList<Location> currentWalkPath;
-	//private ArrayList<LatLng> currentWalkPathLatLng;
+	private ArrayList<LatLng> currentWalkPathLatLng;
 	private boolean isTest;
 	private boolean center;
 	private boolean zoom;
@@ -30,19 +38,19 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		this.database = new Database(this);
 		
 		this.currentWalkPath = getDatabase().getCurrentWalkPath();
-		//this.currentWalkPathLatLng = convertToLatLng(getCurrentWalkPath());
+		this.currentWalkPathLatLng = convertToLatLng(getCurrentWalkPath());
 		
 		updateValuesFromPreferences();
 	}
 	
-	/*private ArrayList<LatLng> convertToLatLng(ArrayList<Location> path){
+	private ArrayList<LatLng> convertToLatLng(ArrayList<Location> path){
 		ArrayList<LatLng> convert = new ArrayList<LatLng>();
 		for(Location location : path){
 			convert.add(new LatLng(location.getLatitude(), location.getLongitude()));
 		}
 		
 		return convert;
-	}*/
+	}
 	
 	@Override
 	public void onTerminate(){
@@ -61,8 +69,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	}
 	
 	public boolean isTest(){
-		//return this.isTest;
-		return false;
+		return this.isTest;
+		//return false;
 	}
 	
 	public boolean isZoom(){
@@ -100,7 +108,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 		return this.currentWalkPath;
 	}
 	
-	/*public ArrayList<LatLng> getCurrentWalkPathLatLng(){
+	public ArrayList<LatLng> getCurrentWalkPathLatLng(){
 		return this.currentWalkPathLatLng;
-	}*/
+	}
+	
 }

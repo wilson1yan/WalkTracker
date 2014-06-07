@@ -1,4 +1,4 @@
-package com.tracker;
+package com.wtwalktracker2;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;

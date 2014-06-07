@@ -1,6 +1,8 @@
-package com.tracker;
+package com.wtwalktracker2;
 
 
+
+import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -16,10 +18,17 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 
 public class WalkMap extends FragmentActivity{
@@ -44,6 +53,12 @@ public class WalkMap extends FragmentActivity{
 		mapHandler = new MapHandler(mMap);
 		
 		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
+		mapHandler.getMap().setOnCameraChangeListener(new OnCameraChangeListener() {
+			
+			public void onCameraChange(CameraPosition arg0) {
+				mapHandler.updateBounds(walktracker.getCurrentWalkPathLatLng());
+			}
+		});
      }
 	
 	@Override
@@ -64,10 +79,12 @@ public class WalkMap extends FragmentActivity{
 		locationFilter.addAction(PathManager.CLEAR_MAP);
 		locationFilter.addAction(PathManager.PERSON_UPDATE);
 		
-		receiver = new LocationReceiver();
-		registerReceiver(receiver, locationFilter);
+		if(receiver == null){
+			receiver = new LocationReceiver();
+			registerReceiver(receiver, locationFilter);
+		}
 		
-		if(PathManager.isWalking) mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
+		//if(PathManager.isWalking) mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
 	}
 	
 	@Override
@@ -174,7 +191,12 @@ public class WalkMap extends FragmentActivity{
 	public void updateMapWithNewLocation(Location location){
 		//mapHandler.updateMap(walktracker.getCurrentWalkPathLatLng(), walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
 		mapHandler.updateMap(walktracker.getCurrentWalkPath());
-		mapHandler.animateCamera(walktracker);
+		if(mapHandler.centerCounter == 10){
+			mapHandler.animateCamera(walktracker, this);
+			mapHandler.centerCounter = 0;
+		}else{
+			mapHandler.centerCounter++;
+		}
 	}
 	
 	public class LocationReceiver extends BroadcastReceiver{
@@ -193,7 +215,7 @@ public class WalkMap extends FragmentActivity{
 				loc.setLongitude(lon);
 				
 				mapHandler.updateWalkerLoc(loc);
-				mapHandler.animateCamera(walktracker);
+				mapHandler.animateCamera(walktracker, WalkMap.this);
 			}
 		}
 	}

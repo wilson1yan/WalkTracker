@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <com.tracker.WalkCanvas android:id="@+id/canvas"
+    <com.wtwalktracker2.WalkCanvas android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="240px"
         android:layout_alignParentTop="true"/>
@@ -14,7 +14,5 @@
       android:layout_below="@+id/canvas" 
       class="com.google.android.gms.maps.SupportMapFragment"
       />
-    
-      
     
 </RelativeLayout>

@@ -1,4 +1,4 @@
-package com.tracker;
+package com.wtwalktracker2;
 
 import java.text.DecimalFormat;
 import java.util.Date;

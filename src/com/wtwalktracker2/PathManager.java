@@ -1,6 +1,7 @@
-package com.tracker;
+package com.wtwalktracker2;
 
 import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
+import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -151,7 +152,7 @@ public class PathManager extends Service implements LocationListener{
 		}
 		
 		walktracker.getCurrentWalkPath().add(location);
-		//walktracker.getCurrentWalkPathLatLng().add(new LatLng(location.getLatitude(), location.getLongitude()));
+		walktracker.getCurrentWalkPathLatLng().add(new LatLng(location.getLatitude(), location.getLongitude()));
 		
 		updatePreferences();
 		walktracker.updateLocationToDatabase(location, false);
@@ -205,12 +206,12 @@ public class PathManager extends Service implements LocationListener{
 
 		}
 		walktracker.getCurrentWalkPath().clear();
-		//walktracker.getCurrentWalkPathLatLng().clear();
+		walktracker.getCurrentWalkPathLatLng().clear();
 
 		if(prevLocation != null){
 			walktracker.getDatabase().updateDatabasePoint(prevLocation, true);
 			walktracker.getCurrentWalkPath().add(prevLocation);
-			//walktracker.getCurrentWalkPathLatLng().add(new LatLng(prevLocation.getLatitude(), prevLocation.getLongitude()));
+			walktracker.getCurrentWalkPathLatLng().add(new LatLng(prevLocation.getLatitude(), prevLocation.getLongitude()));
 		}
 		
 		reset();
