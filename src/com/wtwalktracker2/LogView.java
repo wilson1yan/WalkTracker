@@ -2,6 +2,8 @@ package com.wtwalktracker2;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import com.google.gson.Gson;
 
@@ -43,6 +45,8 @@ public class LogView extends ListActivity{
 		super.onCreate(bundle);
 		database = new Database(this);
 		logs = database.getLogs();
+		Collections.reverse(logs);
+		
 		walktracker = (WalkTrackerApplication) getApplication();
 
 		adapter = new ArrayAdapter<Log>(this, R.layout.log_list,R.id.log, logs);

@@ -69,8 +69,8 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	}
 	
 	public boolean isTest(){
-		return this.isTest;
-		//return false;
+		//return this.isTest;
+		return false;
 	}
 	
 	public boolean isZoom(){
