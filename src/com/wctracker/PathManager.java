@@ -119,14 +119,15 @@ public class PathManager extends Service implements LocationListener{
 	}
 	
 	private void foreground(){
-		Notification note = new Notification(R.drawable.person, "Running", System.currentTimeMillis());
 		Intent intent = new Intent(this, PathManager.class);
 		
 		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
 						Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		
 		PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
-		note.setLatestEventInfo(this, "Walk Calorie Tracker", "Now Tracking", pi);
+		@SuppressWarnings("deprecation")
+		Notification note = new Notification.Builder(this)
+			.setContentTitle("Walk Calorie Tracker").setContentText("GPS tracking has begun").setSmallIcon(R.drawable.person).setWhen(System.currentTimeMillis()).setContentIntent(pi).getNotification();
 		note.flags |= Notification.FLAG_NO_CLEAR;
 		
 		startForeground(1234, note);
