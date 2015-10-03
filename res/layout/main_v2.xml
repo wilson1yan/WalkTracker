@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
-    <com.wtwalktracker2.WalkCanvas android:id="@+id/canvas"
+    <com.wctracker.WalkCanvas android:id="@+id/canvas"
         android:layout_width="match_parent"
         android:layout_height="240px"
         android:layout_alignParentTop="true"/>

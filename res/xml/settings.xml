@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
    	<EditTextPreference 
    	    android:key="weight"
@@ -18,11 +19,12 @@
    	    android:entries="@array/calories"
    	    android:entryValues="@array/calories"
    	    android:defaultValue="Gross"/>
-    <!-- <CheckBoxPreference 
+     <!-- <CheckBoxPreference 
    	    android:key="artificial"
    	    android:title="Fake"
    	    android:defaultValue="True"/>
-   	     -->
+     -->
+   	    
    	    
    	
    	<CheckBoxPreference 

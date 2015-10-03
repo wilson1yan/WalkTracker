@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

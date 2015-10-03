@@ -1,5 +1,5 @@
 /** Automatically generated file. DO NOT MODIFY */
-package com.wtwalktracker2;
+package com.wctracker;
 
 public final class BuildConfig {
     public final static boolean DEBUG = true;

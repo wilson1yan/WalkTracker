@@ -1,13 +1,7 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.util.ArrayList;
 import java.util.Date;
-
-
-
-
-
-
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -16,16 +10,15 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.location.Location;
 import android.preference.PreferenceManager;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
+import android.widget.Toast;
+
 
 public class WalkTrackerApplication extends Application implements OnSharedPreferenceChangeListener{	
 	private SharedPreferences sharedPreferences;
 	private Database database;
 	private ArrayList<Location> currentWalkPath;
 	private ArrayList<LatLng> currentWalkPathLatLng;
-	private boolean isTest;
+	//private boolean isTest;
 	private boolean center;
 	private boolean zoom;
 		
@@ -58,13 +51,23 @@ public class WalkTrackerApplication extends Application implements OnSharedPrefe
 	}
 	
 	private void updateValuesFromPreferences(){
-		this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
+		//this.isTest = sharedPreferences.getBoolean(Settings.TEST, true);
 		this.center = sharedPreferences.getBoolean(Settings.CENTER, true);
 		this.zoom = sharedPreferences.getBoolean(Settings.ZOOM, true);
 		Calculator.measurementUnit = sharedPreferences.getString(Settings.MEASUREMENT, "m");
 	}
 	
-	public void onSharedPreferenceChanged(SharedPreferences arg0, String arg1) {
+	public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+		if(key.equalsIgnoreCase(Settings.WEIGHT)){
+			String wt = pref.getString(key, "150");
+			try{
+				Double.parseDouble(wt);
+			}catch(NumberFormatException e){
+				Toast.makeText(this, "Please Input a Valid Number", Toast.LENGTH_LONG).show();
+				pref.edit().putString(Settings.WEIGHT, "150").commit();
+			}
+		}
+		
 		updateValuesFromPreferences();
 	}
 	

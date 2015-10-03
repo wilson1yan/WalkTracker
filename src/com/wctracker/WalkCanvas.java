@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 
 import java.text.DecimalFormat;
@@ -79,7 +79,8 @@ public class WalkCanvas extends SurfaceView implements SurfaceHolder.Callback{
 		int x = canvas.getWidth()/4;
 		int y = (canvas.getHeight())-(canvas.getHeight()/10);
 		
-		String text = (int)Calculator.totalCalories + " calories";
+		double calories = Calculator.totalCalories*1.75;
+		String text = (int)calories + " calories";
 		canvas.drawText(text, x, y, paint);
 	}
 	

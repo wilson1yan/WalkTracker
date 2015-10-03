@@ -1,8 +1,9 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
-import com.google.android.gms.maps.LocationSource.OnLocationChangedListener;
 import com.google.android.gms.maps.model.LatLng;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.widget.Toast;
 
 public class PathManager extends Service implements LocationListener{
 	public static final String LOCATION_UPDATE = "com.tracker.PathManager.LOCATION_UPDATE";
@@ -24,7 +26,6 @@ public class PathManager extends Service implements LocationListener{
 	public static final String LONGITUDE = "com.tracker.PathManager.LONGITUDE";
 	
 	public static final int DELAY_STRING = 1000;
-	private OnLocationChangedListener listener;
 	public static boolean isRunning = false, isWalking = false;
 	
 	LocationManager manager;
@@ -51,6 +52,11 @@ public class PathManager extends Service implements LocationListener{
 		super.onCreate();
 		
 		manager = (LocationManager)getSystemService(LOCATION_SERVICE);
+		
+		if(!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+			Toast.makeText(this, "Please turn on GPS in settings.", Toast.LENGTH_LONG).show();
+		}
+		
 		walktracker = (WalkTrackerApplication) getApplication();
 		
 		handler = new Handler();
@@ -91,7 +97,9 @@ public class PathManager extends Service implements LocationListener{
 		
 		activate();
 		
-		return START_STICKY;
+		foreground();
+		
+		return START_NOT_STICKY;
 	}
 	
 	private void initCalculator(){		
@@ -103,11 +111,25 @@ public class PathManager extends Service implements LocationListener{
 			startTime = System.currentTimeMillis();
 		}
 		
-		double weight = Integer.parseInt(walktracker.getSharedPreferences().getString(Settings.WEIGHT, "150"));
+		double weight = Double.parseDouble(walktracker.getSharedPreferences().getString(Settings.WEIGHT, "150"));
 		String unit = walktracker.getSharedPreferences().getString(Settings.MEASUREMENT, "m");
 		String calorieType = walktracker.getSharedPreferences().getString(Settings.CALORIE_BURN, "Gross");
 		
 		calculator = new Calculator(distance, calories, startTime, weight, unit, calorieType);
+	}
+	
+	private void foreground(){
+		Notification note = new Notification(R.drawable.person, "Running", System.currentTimeMillis());
+		Intent intent = new Intent(this, PathManager.class);
+		
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|
+						Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		
+		PendingIntent pi = PendingIntent.getActivity(this, 0, intent, 0);
+		note.setLatestEventInfo(this, "Walk Calorie Tracker", "Now Tracking", pi);
+		note.flags |= Notification.FLAG_NO_CLEAR;
+		
+		startForeground(1234, note);
 	}
 	
 	@Override
@@ -117,7 +139,13 @@ public class PathManager extends Service implements LocationListener{
 
 		manager.removeUpdates(this);
 		isRunning = false;
+		
+		stop();
 	}
+	
+	private void stop() {
+	     stopForeground(true);
+	 }
 
 	public void activate() {
 		if(!walktracker.isTest()){
@@ -223,7 +251,7 @@ public class PathManager extends Service implements LocationListener{
 		
 		notifyMapToClear();
 		
-		this.isWalking = false;
+		PathManager.isWalking = false;
 	}
 	
 	private void startWalk(){
@@ -236,7 +264,7 @@ public class PathManager extends Service implements LocationListener{
 			activate();
 		}
 		
-		this.isWalking = true;
+		PathManager.isWalking = true;
 	}
 	
 	

@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -46,7 +46,8 @@ public class Log {
 		string += (int)calories + "cal ";
 		double min = time/60;
 		DecimalFormat decimalFormat = new DecimalFormat("#.##");
-		min = Double.valueOf(decimalFormat.format(min));
+		
+		min = Double.valueOf(decimalFormat.format(min).replace(',', '.'));
 
 		string += min + "min\n";
 		return string;

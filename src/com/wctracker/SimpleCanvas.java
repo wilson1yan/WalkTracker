@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.text.DecimalFormat;
 
@@ -95,13 +95,6 @@ public class SimpleCanvas extends SurfaceView implements SurfaceHolder.Callback{
 		}
 	}
 	
-	private double getCorrectDecimalPlace(double totalDistance, String measurementUnit){
-		if(measurementUnit.equalsIgnoreCase(Settings.MILE) || measurementUnit.equalsIgnoreCase(Settings.KILOMETER)){
-			return Double.parseDouble(format.format(totalDistance));
-		}else{
-			return (int)totalDistance;
-		}
-	}
 	
 	private void initGrad(Canvas canvas){
 		if(grad==null || gradVert==null){

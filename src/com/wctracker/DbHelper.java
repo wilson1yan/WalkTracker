@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

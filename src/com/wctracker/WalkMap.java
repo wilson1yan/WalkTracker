@@ -1,8 +1,7 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 
 
-import java.util.ArrayList;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -14,24 +13,20 @@ import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 
-public class WalkMap extends FragmentActivity{
+public class WalkMap extends AppCompatActivity{
 	public static final String PREFERENCE_UPDATE = "PREFERENCE_UPDATE";
 	public static final String STOP_WALK_UDPATE = "STOP_WALK";
 	public static final String SAVE_KEY = "SAVE";
@@ -42,14 +37,19 @@ public class WalkMap extends FragmentActivity{
 		
 	LocationReceiver receiver;
 	WalkTrackerApplication walktracker;
+	LocationManager manager;
 			
 	@Override
 	public void onCreate(Bundle bundle){
 		super.onCreate(bundle);
+				
 		setContentView(R.layout.main_v2);
 		
 		walktracker = (WalkTrackerApplication) getApplication();
 		initMap();
+		
+		
+		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 		mapHandler = new MapHandler(mMap);
 		
 		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
@@ -59,7 +59,34 @@ public class WalkMap extends FragmentActivity{
 				mapHandler.updateBounds(walktracker.getCurrentWalkPathLatLng());
 			}
 		});
+				
      }
+	
+	public void checkIfGPSEnabled(){
+		 if(manager == null) manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
+
+		    if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
+		        buildAlertMessageNoGps();
+		    }
+	}
+	
+	private void buildAlertMessageNoGps() {
+	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+	    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
+	           .setCancelable(false)
+	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, final int id) {
+	                   startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+	               }
+	           })
+	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
+	               public void onClick(final DialogInterface dialog, final int id) {
+	                    dialog.cancel();
+	               }
+	           });
+	    final AlertDialog alert = builder.create();
+	    alert.show();
+	}
 	
 	@Override
 	public void onStart(){
@@ -68,6 +95,8 @@ public class WalkMap extends FragmentActivity{
 		if(!PathManager.isWalking && !PathManager.isRunning){
 			startService(new Intent(this, PathManager.class));
 		}
+		
+		checkIfGPSEnabled();
 	}
 	
 	@Override
@@ -108,14 +137,13 @@ public class WalkMap extends FragmentActivity{
 	@Override
 	public void onDestroy(){
 		super.onDestroy();	
-		stopService(new Intent(this, PathManager.class));
+		//stopService(new Intent(this, PathManager.class));
 		unregisterReceiver(receiver);
 	}
 	
 
 	private void initMap(){
 		mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
-		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 	}
 
 	@Override
@@ -154,7 +182,7 @@ public class WalkMap extends FragmentActivity{
 			}
 			break;
 		case R.id.viewLog:
-			startActivity(new Intent(this, LogView.class));
+			startActivity(new Intent(this, LogActivity.class));
 			break;
 		}
 		return true;

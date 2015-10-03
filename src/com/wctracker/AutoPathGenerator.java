@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.util.Random;
 

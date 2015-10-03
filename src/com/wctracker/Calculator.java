@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import java.util.HashMap;
 
@@ -66,7 +66,8 @@ public class Calculator {
 	
 	private double findSpeed(double distance, double hours){
 		double km = 0;
-		km = (distance/(Double)METRIC_CONVERSION.get(Calculator.measurementUnit))/1000; 
+		//km = (distance/(Double)METRIC_CONVERSION.get(Calculator.measurementUnit))/1000; 
+		km = distance/1000; 
 		return km/hours;
 	}
 	

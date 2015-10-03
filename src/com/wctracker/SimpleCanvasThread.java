@@ -1,35 +1,35 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
-public class CanvasThread extends Thread{
+public class SimpleCanvasThread extends Thread {
 	private SurfaceHolder _surfaceHolder;
-	private WalkCanvas _canvas;
+	private SimpleCanvas _canvas;
 	private boolean _run = false;
-	
-	public CanvasThread(SurfaceHolder surfaceHolder, WalkCanvas walkCanvas){
+
+	public SimpleCanvasThread(SurfaceHolder surfaceHolder, SimpleCanvas walkCanvas) {
 		_surfaceHolder = surfaceHolder;
 		_canvas = walkCanvas;
 	}
-	
-	public void setRunning(boolean run){
+
+	public void setRunning(boolean run) {
 		_run = run;
 	}
-	
+
 	@Override
-	public void run(){
+	public void run() {
 		Canvas c;
-		
-		while(_run){
+
+		while (_run) {
 			c = null;
-			try{
+			try {
 				c = _surfaceHolder.lockCanvas();
 				synchronized (_surfaceHolder) {
 					_canvas.draw(c);
 				}
-			}finally{
-				if(c!=null){
+			} finally {
+				if (c != null) {
 					_surfaceHolder.unlockCanvasAndPost(c);
 				}
 			}

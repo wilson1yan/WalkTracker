@@ -1,4 +1,4 @@
-package com.wtwalktracker2;
+package com.wctracker;
 
 
 
@@ -7,6 +7,9 @@ package com.wtwalktracker2;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceFragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -18,7 +21,7 @@ import android.view.MenuItem;
  * @author Wilson Yan
  *
  */
-public class Settings extends PreferenceActivity{
+public class Settings extends AppCompatActivity{
 	//All of the keys used in the preferences
 	public static final String WEIGHT = "weight";
 	public static final String MEASUREMENT = "measurement";
@@ -36,18 +39,23 @@ public class Settings extends PreferenceActivity{
 	public static final String CURRENT_CALORIE_KEY = "current calorie";
 	public static final String CURRENT_START_KEY = "current start";
 
-
-
-
 	/**
 	 * Called when activity is first created
 	 */
 	@Override
-	protected void onCreate(Bundle bundle){
+	protected void onCreate(Bundle bundle){		
 		super.onCreate(bundle);
-		addPreferencesFromResource(R.xml.settings);
+		getFragmentManager().beginTransaction().replace(android.R.id.content, new PrefFramgment()).commit();
 	}
-
+	
+	public static class PrefFramgment extends PreferenceFragment{
+		@Override
+		public void onCreate(final Bundle bundle){
+			super.onCreate(bundle);
+			addPreferencesFromResource(R.xml.settings);
+		}
+	}
+	
 	/**
 	 * Creates and Inflates option menu
 	 */
