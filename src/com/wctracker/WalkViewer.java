@@ -17,81 +17,78 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-public class WalkViewer extends AppCompatActivity{
+public class WalkViewer extends AppCompatActivity {
 	ArrayList<Location> walkPath;
 	Database database;
 	BitmapDescriptor bitmapDescriptor;
 	GoogleMap mMap;
 	private static Log log;
-	
-	public void onCreate(Bundle bundle){
+
+	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setContentView(R.layout.simple_mapv2);
-		
+
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 		database = new Database(this);
 		long pos = getIntent().getExtras().getLong("position");
 		walkPath = database.getWalkPoints(pos);
 		log = database.getLog(pos);
-		
-		mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+
+		mMap = ((SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map)).getMap();
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-		bitmapDescriptor = BitmapDescriptorFactory.fromResource(R.drawable.person);
-		
+		bitmapDescriptor = BitmapDescriptorFactory
+				.fromResource(R.drawable.person);
+
 		Location lastPos = new Location(LocationManager.GPS_PROVIDER);
-		lastPos.setLatitude(walkPath.get(walkPath.size()-1).getLatitude());
-		lastPos.setLongitude(walkPath.get(walkPath.size()-1).getLongitude());
-	
+		lastPos.setLatitude(walkPath.get(walkPath.size() - 1).getLatitude());
+		lastPos.setLongitude(walkPath.get(walkPath.size() - 1).getLongitude());
+
 		drawLines();
-		
-		
+
 	}
-	
-	public static Log getLog(){
+
+	@Override
+	public boolean onSupportNavigateUp() {
+		finish();
+		return true;
+	}
+
+	public static Log getLog() {
 		return log;
 	}
-	
-	public Marker createMarker(Location location){
-		return mMap.addMarker(new MarkerOptions().icon(bitmapDescriptor).position(new LatLng(location.getLatitude(), location.getLongitude())));
+
+	public Marker createMarker(Location location) {
+		return mMap.addMarker(new MarkerOptions().icon(bitmapDescriptor)
+				.position(
+						new LatLng(location.getLatitude(), location
+								.getLongitude())));
 	}
-	
-	public void drawLines(){
-		LatLng src = new LatLng(walkPath.get(1).getLatitude(), walkPath.get(1).getLongitude());
-		LatLng dest = new LatLng(walkPath.get(2).getLatitude(), walkPath.get(2).getLongitude());
-        
-		PolylineOptions options = new PolylineOptions().add(src, dest).width(8).color(Color.RED).geodesic(true);
-		for(int i=3; i<walkPath.size(); i++){
-			LatLng next = new LatLng(walkPath.get(i).getLatitude(), walkPath.get(i).getLongitude());
-	        
+
+	public void drawLines() {
+		LatLng src = new LatLng(walkPath.get(1).getLatitude(), walkPath.get(1)
+				.getLongitude());
+		LatLng dest = new LatLng(walkPath.get(2).getLatitude(), walkPath.get(2)
+				.getLongitude());
+
+		PolylineOptions options = new PolylineOptions().add(src, dest).width(8)
+				.color(Color.RED).geodesic(true);
+		for (int i = 3; i < walkPath.size(); i++) {
+			LatLng next = new LatLng(walkPath.get(i).getLatitude(), walkPath
+					.get(i).getLongitude());
+
 			options.add(next);
 		}
 		mMap.addPolyline(options);
-		
-		Location last = walkPath.get(walkPath.size()-1);
+
+		Location last = walkPath.get(walkPath.size() - 1);
 		LatLng latLng = new LatLng(last.getLatitude(), last.getLongitude());
-		mMap.addMarker(new MarkerOptions().position(latLng).icon(bitmapDescriptor));
-		
+		mMap.addMarker(new MarkerOptions().position(latLng).icon(
+				bitmapDescriptor));
+
 		mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 19f));
-		
-	}
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.home, menu);
-		return true;
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		switch(item.getItemId()){
-		case R.id.home:
-			finish();
-			break;
-		}
-		return true;
+
 	}
 }

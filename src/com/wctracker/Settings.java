@@ -1,26 +1,18 @@
 package com.wctracker;
 
-
-
-
-
-
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 /**
- * This is the settings class
- * It helps you be able to personlize it more
- * you can adjust weight, and the measurement unit as well
+ * This is the settings class It helps you be able to personlize it more you can
+ * adjust weight, and the measurement unit as well
+ * 
  * @author Wilson Yan
- *
+ * 
  */
-public class Settings extends AppCompatActivity{
-	//All of the keys used in the preferences
+public class Settings extends AppCompatActivity {
+	// All of the keys used in the preferences
 	public static final String WEIGHT = "weight";
 	public static final String MEASUREMENT = "measurement";
 	public static final String CALORIE_BURN = "calorieBurn";
@@ -41,39 +33,24 @@ public class Settings extends AppCompatActivity{
 	 * Called when activity is first created
 	 */
 	@Override
-	protected void onCreate(Bundle bundle){		
+	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		getFragmentManager().beginTransaction().replace(android.R.id.content, new PrefFramgment()).commit();
+		getFragmentManager().beginTransaction()
+				.replace(android.R.id.content, new PrefFramgment()).commit();
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
-	
-	public static class PrefFramgment extends PreferenceFragment{
+
+	public static class PrefFramgment extends PreferenceFragment {
 		@Override
-		public void onCreate(final Bundle bundle){
+		public void onCreate(final Bundle bundle) {
 			super.onCreate(bundle);
 			addPreferencesFromResource(R.xml.settings);
 		}
 	}
-	
-	/**
-	 * Creates and Inflates option menu
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu){
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.home, menu);
-		return true;
-	}
 
-	/**
-	 * Called when an item on the options menu is selected
-	 */
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		switch(item.getItemId()){
-		case R.id.home:
-			finish();
-			break;
-		}
+	public boolean onSupportNavigateUp() {
+		finish();
 		return true;
 	}
 }

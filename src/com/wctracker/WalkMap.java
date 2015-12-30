@@ -1,8 +1,5 @@
 package com.wctracker;
 
-
-
-
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -24,125 +21,130 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.OnCameraChangeListener;
 import com.google.android.gms.maps.model.CameraPosition;
 
-
-public class WalkMap extends AppCompatActivity{
+public class WalkMap extends AppCompatActivity {
 	public static final String PREFERENCE_UPDATE = "PREFERENCE_UPDATE";
 	public static final String STOP_WALK_UDPATE = "STOP_WALK";
 	public static final String SAVE_KEY = "SAVE";
 	public static final String START_WALK_UPDATE = "START_WALK";
-	
+
 	GoogleMap mMap;
 	MapHandler mapHandler;
-		
+
 	LocationReceiver receiver;
 	WalkTrackerApplication walktracker;
 	LocationManager manager;
-			
+
 	@Override
-	public void onCreate(Bundle bundle){
+	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-				
+
 		setContentView(R.layout.main_v2);
-		
+
 		walktracker = (WalkTrackerApplication) getApplication();
 		initMap();
-		
-		
+
 		mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 		mapHandler = new MapHandler(mMap);
-		
-		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
-		mapHandler.getMap().setOnCameraChangeListener(new OnCameraChangeListener() {
-			
-			public void onCameraChange(CameraPosition arg0) {
-				mapHandler.updateBounds(walktracker.getCurrentWalkPathLatLng());
-			}
-		});
-				
-     }
-	
-	public void checkIfGPSEnabled(){
-		 if(manager == null) manager = (LocationManager) getSystemService( Context.LOCATION_SERVICE );
 
-		    if ( !manager.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
-		        buildAlertMessageNoGps();
-		    }
+		mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
+		mapHandler.getMap().setOnCameraChangeListener(
+				new OnCameraChangeListener() {
+
+					public void onCameraChange(CameraPosition arg0) {
+						mapHandler.updateBounds(walktracker
+								.getCurrentWalkPathLatLng());
+					}
+				});
 	}
-	
+
+	public void checkIfGPSEnabled() {
+		if (manager == null)
+			manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+		if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			buildAlertMessageNoGps();
+		}
+	}
+
 	private void buildAlertMessageNoGps() {
-	    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setMessage("Your GPS seems to be disabled, do you want to enable it?")
-	           .setCancelable(false)
-	           .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, final int id) {
-	                   startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-	               }
-	           })
-	           .setNegativeButton("No", new DialogInterface.OnClickListener() {
-	               public void onClick(final DialogInterface dialog, final int id) {
-	                    dialog.cancel();
-	               }
-	           });
-	    final AlertDialog alert = builder.create();
-	    alert.show();
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage(
+				"Your GPS seems to be disabled, do you want to enable it?")
+				.setCancelable(false)
+				.setPositiveButton("Yes",
+						new DialogInterface.OnClickListener() {
+							public void onClick(final DialogInterface dialog,
+									final int id) {
+								startActivity(new Intent(
+										android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+							}
+						})
+				.setNegativeButton("No", new DialogInterface.OnClickListener() {
+					public void onClick(final DialogInterface dialog,
+							final int id) {
+						dialog.cancel();
+					}
+				});
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
-	
+
 	@Override
-	public void onStart(){
-		super.onStart();		
-		
-		if(!PathManager.isWalking && !PathManager.isRunning){
+	public void onStart() {
+		super.onStart();
+
+		if (!PathManager.isWalking && !PathManager.isRunning) {
 			startService(new Intent(this, PathManager.class));
 		}
-		
+
 		checkIfGPSEnabled();
 	}
-	
+
 	@Override
-	public void onResume(){
+	public void onResume() {
 		super.onResume();
-		
+
 		IntentFilter locationFilter = new IntentFilter();
 		locationFilter.addAction(PathManager.LOCATION_UPDATE);
 		locationFilter.addAction(PathManager.CLEAR_MAP);
 		locationFilter.addAction(PathManager.PERSON_UPDATE);
-		
-		if(receiver == null){
+
+		if (receiver == null) {
 			receiver = new LocationReceiver();
 			registerReceiver(receiver, locationFilter);
 		}
-		
-		//if(PathManager.isWalking) mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
+
+		// if(PathManager.isWalking)
+		// mapHandler.drawCurrentPath(walktracker.getCurrentWalkPath());
 	}
-	
+
 	@Override
-	public void onPause(){
+	public void onPause() {
 		super.onPause();
-		
+
 		notifyServiceTo(PREFERENCE_UPDATE);
-		
+
 	}
-	
+
 	@Override
-	public void onStop(){
+	public void onStop() {
 		super.onStop();
-		
-		if(!PathManager.isWalking && PathManager.isRunning){
+
+		if (!PathManager.isWalking && PathManager.isRunning) {
 			stopService(new Intent(this, PathManager.class));
 		}
 	}
-	
-	
+
 	@Override
-	public void onDestroy(){
-		super.onDestroy();	
-		//stopService(new Intent(this, PathManager.class));
+	public void onDestroy() {
+		super.onDestroy();
+		// stopService(new Intent(this, PathManager.class));
 		unregisterReceiver(receiver);
 	}
-	
 
-	private void initMap(){
-		mMap = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
+	private void initMap() {
+		mMap = ((SupportMapFragment) getSupportFragmentManager()
+				.findFragmentById(R.id.map)).getMap();
 	}
 
 	@Override
@@ -153,29 +155,28 @@ public class WalkMap extends AppCompatActivity{
 	}
 
 	@Override
-    public void onConfigurationChanged(Configuration newConfig)
-    { 
+	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-    }
-	
+	}
+
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item){
-		switch(item.getItemId()){
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
 		case R.id.itemPrefs:
 			startActivity(new Intent(this, Settings.class));
 
 			break;
 		case R.id.reset:
 			System.out.println();
-			
-			if(PathManager.isWalking){
+
+			if (PathManager.isWalking) {
 				Toast.makeText(this, "Stopped", Toast.LENGTH_LONG).show();
-				
+
 				item.setTitle("Start Walk");
 				mapHandler.reset();
 				buildAndShowResetPrompt();
-				
-			}else{				
+
+			} else {
 				item.setTitle("Stop Walk");
 				notifyServiceTo(START_WALK_UPDATE);
 			}
@@ -186,66 +187,69 @@ public class WalkMap extends AppCompatActivity{
 		}
 		return true;
 	}
-	
-	private void buildAndShowResetPrompt(){
+
+	private void buildAndShowResetPrompt() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		String question = "Would You Like to Save Your Walk?";
 		builder.setTitle(question);
-		String[] items = {"Yes", "No"};
+		String[] items = { "Yes", "No" };
 		builder.setItems(items, new DialogInterface.OnClickListener() {
-			
-			public void onClick(DialogInterface dialog, int which) {						
-				boolean saveLog = (which == 0);	//If "yes" is selected, which == 0 is true
+
+			public void onClick(DialogInterface dialog, int which) {
+				boolean saveLog = (which == 0); // If "yes" is selected, which
+												// == 0 is true
 				notifyServiceResetAndOrSaveLog(saveLog);
 			}
 		});
 
 		builder.show();
 	}
-	
-	
-	public void notifyServiceResetAndOrSaveLog(boolean saveLog){
+
+	public void notifyServiceResetAndOrSaveLog(boolean saveLog) {
 		Intent intent = new Intent(STOP_WALK_UDPATE);
 		intent.putExtra(SAVE_KEY, saveLog);
 		sendBroadcast(intent);
 	}
-	
-	public void notifyServiceTo(String action){
+
+	public void notifyServiceTo(String action) {
 		Intent intent = new Intent(action);
 		sendBroadcast(intent);
 	}
-	
-	public void updateMapWithNewLocation(Location location){
-		//mapHandler.updateMap(walktracker.getCurrentWalkPathLatLng(), walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
+
+	public void updateMapWithNewLocation(Location location) {
+		// mapHandler.updateMap(walktracker.getCurrentWalkPathLatLng(),
+		// walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
 		mapHandler.updateMap(walktracker.getCurrentWalkPath());
-		if(mapHandler.centerCounter == 10){
+		if (mapHandler.centerCounter == 10) {
 			mapHandler.animateCamera(walktracker, this);
 			mapHandler.centerCounter = 0;
-		}else{
+		} else {
 			mapHandler.centerCounter++;
 		}
 	}
-	
-	public class LocationReceiver extends BroadcastReceiver{
+
+	public class LocationReceiver extends BroadcastReceiver {
 		@Override
-		public void onReceive(Context context, Intent intent){
-			if(intent.getAction().equalsIgnoreCase(PathManager.LOCATION_UPDATE)){
-				updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(walktracker.getCurrentWalkPath().size()-1));
-			}else if(intent.getAction().equalsIgnoreCase(PathManager.CLEAR_MAP)){
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction()
+					.equalsIgnoreCase(PathManager.LOCATION_UPDATE)) {
+				updateMapWithNewLocation(walktracker.getCurrentWalkPath().get(
+						walktracker.getCurrentWalkPath().size() - 1));
+			} else if (intent.getAction().equalsIgnoreCase(
+					PathManager.CLEAR_MAP)) {
 				mapHandler.clearMap();
-			}else if(intent.getAction().equalsIgnoreCase(PathManager.PERSON_UPDATE)){
+			} else if (intent.getAction().equalsIgnoreCase(
+					PathManager.PERSON_UPDATE)) {
 				double lat = intent.getDoubleExtra(PathManager.LATITUDE, 0);
 				double lon = intent.getDoubleExtra(PathManager.LONGITUDE, 0);
-				
+
 				Location loc = new Location(LocationManager.GPS_PROVIDER);
 				loc.setLatitude(lat);
 				loc.setLongitude(lon);
-				
+
 				mapHandler.updateWalkerLoc(loc);
 				mapHandler.animateCamera(walktracker, WalkMap.this);
 			}
 		}
 	}
 }
-
-

@@ -8,7 +8,8 @@ public class SimpleCanvasThread extends Thread {
 	private SimpleCanvas _canvas;
 	private boolean _run = false;
 
-	public SimpleCanvasThread(SurfaceHolder surfaceHolder, SimpleCanvas walkCanvas) {
+	public SimpleCanvasThread(SurfaceHolder surfaceHolder,
+			SimpleCanvas walkCanvas) {
 		_surfaceHolder = surfaceHolder;
 		_canvas = walkCanvas;
 	}
