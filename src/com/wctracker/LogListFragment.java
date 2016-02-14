@@ -1,7 +1,6 @@
 package com.wctracker;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import com.google.gson.Gson;
 

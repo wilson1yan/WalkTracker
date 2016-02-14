@@ -11,9 +11,11 @@ import java.util.Date;
  * 
  */
 public class Log {
-	private static final String[] DAYS_OF_WEEK = {"Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"};
-	private static final String[] MONTHS = {"Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sept","Oct","Nov","Dec"};
-	
+	private static final String[] DAYS_OF_WEEK = { "Sun", "Mon", "Tues", "Wed",
+			"Thurs", "Fri", "Sat" };
+	private static final String[] MONTHS = { "Jan", "Feb", "Mar", "Apr", "May",
+			"June", "July", "Aug", "Sept", "Oct", "Nov", "Dec" };
+
 	private Calendar calendar;
 	private Date date;
 	private int timeW;
@@ -36,7 +38,7 @@ public class Log {
 			String measurement, long id) {
 		this.calendar = Calendar.getInstance();
 		this.calendar.setTime(date);
-		this.date = date; 
+		this.date = date;
 		this.timeW = time;
 		this.calories = calories;
 		this.distance = distance;
@@ -52,18 +54,26 @@ public class Log {
 	 */
 	@Override
 	public String toString() {
-		String num = "Walk #" + (id+1);
-		String date = "Date: " + DAYS_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK)-1] + " " + MONTHS[calendar.get(Calendar.MONTH)-1] + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
-		String st = "Start time: " + calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
-		String dist = "Distance: " + new DecimalFormat("#.##").format(this.convertedDistance)
+		String num = "Walk #" + (id + 1);
+		String date = "Date: "
+				+ DAYS_OF_WEEK[calendar.get(Calendar.DAY_OF_WEEK) - 1] + " "
+				+ MONTHS[calendar.get(Calendar.MONTH) - 1] + " "
+				+ calendar.get(Calendar.DAY_OF_MONTH) + ", "
+				+ calendar.get(Calendar.YEAR);
+		String st = "Start time: " + calendar.get(Calendar.HOUR_OF_DAY) + ":"
+				+ calendar.get(Calendar.MINUTE) + ":"
+				+ calendar.get(Calendar.SECOND);
+		String dist = "Distance: "
+				+ new DecimalFormat("#.##").format(this.convertedDistance)
 				+ measurement;
 		String wt = "Walk time: " + getTime(timeW);
-		String cb = "Calories burned: " + (int)calories + "cal";
-		
-		String string = num + "\n" + date + "\n" + st + "\n" + dist + "\n" + wt + "\n" + cb;
+		String cb = "Calories burned: " + (int) calories + "cal";
+
+		String string = num + "\n" + date + "\n" + st + "\n" + dist + "\n" + wt
+				+ "\n" + cb;
 		return string;
 	}
-	
+
 	private String getTime(int time) {
 		String text = "";
 		int remainder;
@@ -87,21 +97,13 @@ public class Log {
 		} else {
 			text += time + "s";
 		}
-	
 
 		return text;
 	}
 
 	public String getShortString() {
-		String string = "";
-		int convertedDistance = (int) (Calculator.METRIC_CONVERSION
-				.get(measurement) * distance);
-		string += convertedDistance + measurement + " ";
 
-		string += (int) calories + "cal ";
-		string += getTime((int)timeW);
-		
-		return string;
+		return "Walk #" + (id + 1);
 	}
 
 	/**
